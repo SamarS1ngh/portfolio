@@ -553,7 +553,7 @@ function PeriodicScene({ progressRef }: { progressRef: React.MutableRefObject<nu
         const x = (c - (cols - 1) / 2) * 0.35;
         const y = ((rows - 1) / 2 - r) * 0.35;
         return (
-          <mesh key={i} position={[x, y, 0]} ref={(el) => (tilesRef.current[i] = el)}>
+          <mesh key={i} position={[x, y, 0]} ref={(el) => { tilesRef.current[i] = el; }}>
             <boxGeometry args={[0.3, 0.3, 0.05]} />
             <meshStandardMaterial color={it.color} metalness={0.2} roughness={0.6} emissive={it.color} emissiveIntensity={0.25} />
           </mesh>

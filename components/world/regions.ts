@@ -20,7 +20,7 @@ export type Region = {
   interact: string;
   quests: Quest[];
   enterEvent: string;
-  contentKind: "origin" | "doctrine" | "missions" | "armory" | "cove" | "deck" | "summit";
+  contentKind: "origin" | "notebook" | "missions" | "armory" | "cove" | "deck" | "summit";
 };
 
 export const regions: Region[] = [
@@ -48,24 +48,24 @@ export const regions: Region[] = [
     contentKind: "origin",
   },
   {
-    code: "R1", region: "ARCHIVE GROVE", codename: "ZAGI-V", classification: "ANOMALY · KORVAX-OUTPOST", title: "doctrine", jp: "学習",
-    headline: "learning machines learning.",
-    serif: "rules I build by, encoded as edges between ideas.",
-    biome: "the library · where ideas connect",
+    code: "R1", region: "ARCHIVE GROVE", codename: "ZAGI-V", classification: "ANOMALY · KORVAX-OUTPOST", title: "field notes", jp: "現場",
+    headline: "what's on the bench.",
+    serif: "live log · current work, weekend experiments, dead ends.",
+    biome: "the workbench · what's running this week",
     tint: "rgba(80,40,120,0.42)",
     glyph: "✦",
     ann: [
-      { label: "nodes", value: "n = 32" },
-      { label: "edges", value: "d² < 0.85" },
-      { label: "loss", value: "↓ y/y" },
-      { label: "φ", value: "1.61803" },
+      { label: "building", value: "n = 3" },
+      { label: "experiments", value: "n = 3" },
+      { label: "dead ends", value: "n = 2" },
+      { label: "sync", value: "live" },
     ],
-    formula: "L(θ) = Σᵢ ||y - f(x;θ)||² + λ·R(θ)",
-    side: "▸ doctrine · neural lattice",
-    interact: "scroll to spin the lattice",
-    quests: [{ id: "R1:read", label: "read all six principles" }],
+    formula: "log(t) ⊃ {focus, build, exp, deadends, deck}",
+    side: "▸ field notes · bench log",
+    interact: "scroll to read the log",
+    quests: [{ id: "R1:read", label: "read the bench log" }],
     enterEvent: "entering region · ARCHIVE GROVE",
-    contentKind: "doctrine",
+    contentKind: "notebook",
   },
   {
     code: "R2", region: "FABRICATION YARDS", codename: "VYR-3", classification: "FORGE-WORLD · IRRADIATED", title: "work", jp: "工房",
@@ -123,7 +123,7 @@ export const regions: Region[] = [
     formula: "ρ(x) = Σⱼ wⱼ · N(x | μⱼ, Σⱼ)",
     side: "▸ interests · constellation",
     interact: "tune any channel",
-    quests: [{ id: "R4:tune", label: "tune all four channels" }],
+    quests: [{ id: "R4:tune", label: "tune all five channels" }],
     enterEvent: "entering region · STARLIGHT COVE",
     contentKind: "cove",
   },

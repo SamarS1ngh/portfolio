@@ -557,6 +557,8 @@ export default function World() {
           // skip non-adjacent regions — keeps stack to max 3 panels so wheel events reach the right one
           if (Math.abs(i - chamberIdx) > 1) return null;
           const isActive = i === chamberIdx;
+          // Pin mission-detail occupies the same right-side slot; hide R0 content when a pin is open
+          if (isActive && chamberIdx === 0 && activePin) return null;
           return (
             <RegionLayer
               key={reg.code + "-content"}
@@ -791,18 +793,19 @@ function RegionLayer({
   f,
   children,
   className = "",
-  interactive = false,
 }: {
   i: number;
   f: MotionValue<number>;
   children: React.ReactNode;
   className?: string;
+  // `interactive` retained as prop for call-site clarity but wrapper is always pointer-events:none
+  // so it never blocks the 3D canvas underneath. Inner content opts in via its own pointer-events-auto.
   interactive?: boolean;
 }) {
   const alpha = useTransform(f, (val) => regionAlpha(i, val));
   return (
     <motion.div
-      style={{ opacity: alpha, pointerEvents: interactive ? "auto" : "none" }}
+      style={{ opacity: alpha, pointerEvents: "none" }}
       className={className}
     >
       {children}

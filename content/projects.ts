@@ -23,8 +23,8 @@ export const projects: Project[] = [
     name: "Jarvis",
     year: "2025—",
     role: "solo · everything",
-    blurb: "voice OS for the desktop",
-    tagline: "Stark-style assistant that lives on my laptop. Always listening, never annoying.",
+    blurb: "voice-first personal assistant for the desktop",
+    tagline: "Talk to your laptop like a person. Jarvis listens, talks back, and actually does things — opens apps, runs commands, manages files, pulls context from across your system. Not a chat box, an operator.",
     stack: ["TypeScript", "OpenAI Realtime", "Vosk", "Tauri", "Linux daemon", "RAG (WIP)"],
     tags: ["ai", "voice", "infra"],
     status: "active",
@@ -53,7 +53,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "solo · android + ml",
     blurb: "ruthless notification filter",
-    tagline: "ML decides what's worth your attention. The rest gets summarized or shot.",
+    tagline: "An app that uses AI to filter your phone notifications. Every swipe — accept or dismiss — teaches it what matters to you, so it gets sharper with each use.",
     stack: ["Kotlin", "Jetpack Compose", "NotificationListenerService", "Gemini Flash", "Room"],
     tags: ["mobile", "ai"],
     status: "shipping",
@@ -104,31 +104,6 @@ export const projects: Project[] = [
     ],
     outcome:
       "All four modules in active dev. SSO + Org production-ready. PM in beta with internal users. Ledger scaffolded.",
-  },
-  {
-    slug: "ai-companion",
-    name: "AI Companion",
-    year: "2025",
-    role: "collab · backend + ai",
-    blurb: "long-context companion",
-    tagline: "Conversational AI with persistent memory — remembers you across sessions, weeks, months.",
-    stack: ["Python", "FastAPI", "OpenAI", "pgvector", "Redis"],
-    tags: ["ai", "voice"],
-    status: "active",
-    problem:
-      "Chat assistants forget you the moment the tab closes. For a companion that's supposed to feel like 'someone who knows you', that's a non-starter.",
-    decisions: [
-      {
-        title: "Episodic + semantic memory split",
-        body: "Episodic (raw conversation chunks, embedded) for recall; semantic (compressed facts about the user) for prompt injection. Two layers, queried differently.",
-      },
-      {
-        title: "Async memory consolidation",
-        body: "Background worker periodically reads recent episodes, distills facts, dedupes against existing semantic memory. Mirrors how sleep consolidates human memory.",
-      },
-    ],
-    outcome:
-      "Memory recall feels qualitatively different from a vanilla chat — users report the companion bringing up things from weeks prior. Still tuning the consolidation cadence.",
   },
   {
     slug: "teacher-pau",

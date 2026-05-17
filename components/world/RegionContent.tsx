@@ -8,14 +8,6 @@ import { stack } from "@/content/stack";
 import { interests } from "@/content/interests";
 import { now } from "@/content/now";
 
-const principles = [
-  "ship something every year worth defending in a room of strangers.",
-  "first principles. nothing inherited without inspection.",
-  "taste compounds. brute force does not.",
-  "the suit doesn't make the maker — the iteration cycle does.",
-  "if it can't be explained, it isn't understood yet.",
-  "make things quiet. let them speak loud.",
-];
 
 export function RegionContent({
   kind,
@@ -23,7 +15,7 @@ export function RegionContent({
 }: {
   kind:
     | "origin"
-    | "doctrine"
+    | "notebook"
     | "missions"
     | "armory"
     | "cove"
@@ -57,7 +49,7 @@ export function RegionContent({
         style={{ maxHeight: "calc(72vh - 42px)" }}
       >
         {kind === "origin" && <OriginContent />}
-        {kind === "doctrine" && <DoctrineContent onRead={() => onMarkQuest("R1:read")} />}
+        {kind === "notebook" && <NotebookContent onRead={() => onMarkQuest("R1:read")} />}
         {kind === "missions" && <MissionsContent onInspect={() => onMarkQuest("R2:inspect")} />}
         {kind === "armory" && <ArmoryContent />}
         {kind === "cove" && <CoveContent onTuneAll={() => onMarkQuest("R4:tune")} />}
@@ -70,41 +62,94 @@ export function RegionContent({
 
 /* ============== ORIGIN ============== */
 function OriginContent() {
+  const lane = [
+    "android / ios",
+    "react native",
+    "next.js",
+    "nodejs",
+    "full-stack saas",
+    "ai automation",
+    "n8n",
+    "mcp server",
+    "agentic ai",
+    "machine learning",
+    "RAG / pgvector",
+  ];
+  const fuel = [
+    "anime", "music", "video games", "sleep", "travelling", "chess", "manga", "manhwa",
+    "gym", "diet coke", "late night walks", "cooking", "sketch", "meditation",
+  ];
   return (
     <div className="space-y-6">
       <div>
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-          ▸ operator profile · samar narangi
+          ▸ operator profile · samar singh
         </div>
         <h3
           className="mt-3 font-light text-3xl uppercase tracking-tight text-bone"
           style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
-          engineer of strange quiet machines.
+          full-stack · mobile · ai.
         </h3>
       </div>
 
-      <div className="space-y-4 font-serif text-lg leading-[1.7] text-bone">
+      <div className="space-y-4 font-sans text-[15px] leading-relaxed text-bone">
         <p>
-          I build strange things on purpose and try to keep them <em className="text-amber-300">quiet</em> on the surface. Most of my time goes into the awkward middle between research and product — taking an idea that technically works and shaping it so a real person can use it without a manual.
+          I build websites, mobile apps, and AI-powered products. Most of my time goes into the messy middle — taking an idea that technically works and shaping it so a regular person can actually use it without a manual.
         </p>
         <p>
-          I lean toward problems where the hard part is <span className="rounded bg-amber-300/25 px-1.5 text-bone">taste</span>, not throughput. I'd rather ship one undeniable thing in a year than ten forgettable ones in six months.
+          I&apos;d rather ship one thing that&apos;s really good than ten things that are okay. The hard part is usually <span className="rounded bg-amber-300/25 px-1.5 text-bone">taste</span>, not speed.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+      <div className="grid grid-cols-2 gap-2">
         {[
           ["based", "Hyderabad, IN"],
-          ["lane", "voice · mobile · web · ai"],
-          ["since", "2017"],
-          ["fuel", "coffee + reps"],
+          ["since", "2024"],
         ].map(([k, v]) => (
-          <div key={k} className="border border-bone/15 bg-bone/[0.03] px-3 py-2">
-            <div className="text-[9px] uppercase tracking-[0.3em] text-bone/60">{k}</div>
-            <div className="mt-1 text-bone">{v}</div>
+          <div key={k} className="border border-bone/20 bg-bone/[0.04] px-3 py-2.5">
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/70">{k}</div>
+            <div className="mt-1 font-sans text-[15px] font-medium text-bone">{v}</div>
           </div>
         ))}
+      </div>
+
+      {/* LANE — angular amber chips · work-mode */}
+      <div className="border-l-2 border-amber-300/60 pl-3">
+        <div className="mb-2 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300">
+          <span>▸ lane</span>
+          <span className="text-amber-300/40">·</span>
+          <span className="text-amber-300/60">what I build</span>
+        </div>
+        <div className="flex flex-wrap gap-1.5 font-mono text-[11px]">
+          {lane.map((l) => (
+            <span
+              key={l}
+              className="border border-amber-300/40 bg-amber-300/[0.10] px-2 py-1 uppercase tracking-wider text-amber-100"
+            >
+              {l}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* FUEL — rounded emerald pills · off-duty */}
+      <div className="border-l-2 border-emerald-300/60 pl-3">
+        <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-300">
+          <span>◯ fuel</span>
+          <span className="text-emerald-300/50">·</span>
+          <span className="text-emerald-300/80">what keeps me going</span>
+        </div>
+        <div className="flex flex-wrap gap-1.5 font-mono text-[12px]">
+          {fuel.map((f) => (
+            <span
+              key={f}
+              className="rounded-full border border-emerald-300/50 bg-emerald-300/[0.15] px-3 py-1 text-emerald-50"
+            >
+              {f}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="border border-amber-300/40 bg-amber-300/[0.08] px-3 py-2 font-mono text-xs">
@@ -115,34 +160,117 @@ function OriginContent() {
   );
 }
 
-/* ============== DOCTRINE ============== */
-function DoctrineContent({ onRead }: { onRead: () => void }) {
+/* ============== NOTEBOOK (now + lab) ============== */
+function NotebookContent({ onRead }: { onRead: () => void }) {
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ doctrine · ~/manifesto.txt
+    <div onMouseEnter={onRead} className="space-y-8">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ field notes · ~/bench.log
+        </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          what's on the bench.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          A live log of what I'm working on right now. What I'm building, what I'm trying, what didn't work.
+        </p>
+        <div className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/70">
+          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
+          last sync · {now.updated}
+        </div>
       </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        rules I build by.
-      </h3>
-      <ol
-        className="mt-6 space-y-4"
-        onMouseEnter={onRead}
-      >
-        {principles.map((p, i) => (
-          <li
-            key={i}
-            className="flex gap-4 border-l-2 border-amber-300/30 pl-5 hover:border-amber-300"
-          >
-            <span className="font-mono text-base font-bold text-amber-300">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <span className="font-serif text-base leading-snug text-bone md:text-lg">
-              {p}
-            </span>
-          </li>
+
+      {/* FOCUS */}
+      <div className="border border-amber-300/40 bg-amber-300/[0.10] px-4 py-3">
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">this week</div>
+        <div className="mt-1.5 font-sans text-[16px] leading-relaxed text-bone">{now.focus}</div>
+      </div>
+
+      {/* BUILDING */}
+      <Section title="building right now">
+        {now.building.map((b) => (
+          <Row key={b.title} title={b.title} note={b.note} badge={b.status} badgeTone="amber" />
         ))}
-      </ol>
+      </Section>
+
+      {/* TRYING OUT */}
+      <Section title="trying out" subtitle="side experiments">
+        {now.experiments.map((e) => (
+          <Row key={e.title} title={e.title} note={e.note} badge="exp" badgeTone="sky" />
+        ))}
+      </Section>
+
+      {/* DIDN'T WORK */}
+      <Section title="didn't work" subtitle="things I tried and dropped">
+        {now.deadEnds.map((d) => (
+          <Row key={d.title} title={d.title} note={d.note} badge="x" badgeTone="rose" />
+        ))}
+      </Section>
+
+      {/* COMING NEXT */}
+      <Section title="coming next">
+        <ul className="space-y-2">
+          {now.onDeck.map((d) => (
+            <li key={d} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-bone">
+              <span className="mt-1 shrink-0 text-amber-300">▸</span>
+              <span>{d}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+    </div>
+  );
+}
+
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <div className="border-l-2 border-bone/25 pl-4">
+      <div className="mb-3 flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-[0.3em]">
+        <span className="text-bone">▸ {title}</span>
+        {subtitle && (
+          <>
+            <span className="text-bone/40">·</span>
+            <span className="text-bone/70">{subtitle}</span>
+          </>
+        )}
+      </div>
+      <div className="space-y-2.5">{children}</div>
+    </div>
+  );
+}
+
+function Row({
+  title,
+  note,
+  badge,
+  badgeTone,
+}: {
+  title: string;
+  note: string;
+  badge: string;
+  badgeTone: "amber" | "sky" | "rose";
+}) {
+  const toneClasses: Record<typeof badgeTone, string> = {
+    amber: "border-amber-300/50 text-amber-200 bg-amber-300/[0.10]",
+    sky: "border-sky-300/50 text-sky-200 bg-sky-300/[0.10]",
+    rose: "border-rose-400/50 text-rose-200 bg-rose-400/[0.10]",
+  };
+  return (
+    <div className="border border-bone/15 bg-bone/[0.04] px-3.5 py-2.5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="font-sans text-[15px] font-medium leading-snug text-bone">
+          {title}
+        </div>
+        <span
+          className={`mt-0.5 shrink-0 border px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.25em] ${toneClasses[badgeTone]}`}
+        >
+          {badge}
+        </span>
+      </div>
+      <p className="mt-1.5 text-[14px] leading-relaxed text-bone/85">{note}</p>
     </div>
   );
 }
@@ -150,24 +278,33 @@ function DoctrineContent({ onRead }: { onRead: () => void }) {
 /* ============== MISSIONS ============== */
 function MissionsContent({ onInspect }: { onInspect: () => void }) {
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ missions · {projects.length} indexed
+    <div className="space-y-6">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ projects · {projects.length} in the list
+        </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          Things I've built.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          Click any card to read the full story — what the problem was, the calls I made, what shipped.
+        </p>
       </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        six things worth telling.
-      </h3>
-      <ul className="mt-5 space-y-2">
+
+      <ul className="space-y-3">
         {projects.map((p, i) => (
           <li key={p.slug}>
             <Link
               href={`/work/${p.slug}`}
               onClick={onInspect}
-              className="group block h-full border border-bone/15 bg-bone/[0.04] p-4 transition-all hover:border-amber-300/60 hover:bg-amber-300/[0.06]"
+              className="group block border border-bone/15 bg-bone/[0.04] p-4 transition-all hover:border-amber-300/60 hover:bg-amber-300/[0.06]"
             >
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/50">
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/60">
                 <span>#{String(i + 1).padStart(2, "0")} · {p.year}</span>
-                <span className="text-amber-300/70">{p.status}</span>
+                <span className="text-amber-300/80">{p.status}</span>
               </div>
               <div
                 className="mt-2 font-light text-xl uppercase tracking-wider text-bone group-hover:text-amber-300"
@@ -175,14 +312,14 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
               >
                 {p.name}
               </div>
-              <p className="mt-1 font-serif text-sm italic text-bone/95">{p.tagline}</p>
+              <p className="mt-1.5 font-sans text-[14px] leading-relaxed text-bone">{p.tagline}</p>
               <div className="mt-3 flex flex-wrap gap-1 font-mono text-[10px] uppercase tracking-widest">
                 {p.tags.map((t) => (
-                  <span key={t} className="border border-bone/15 bg-bone/[0.04] px-1.5 py-0.5 text-bone">{t}</span>
+                  <span key={t} className="border border-bone/20 bg-bone/[0.06] px-1.5 py-0.5 text-bone">{t}</span>
                 ))}
               </div>
-              <div className="mt-3 text-right font-mono text-[10px] uppercase tracking-widest text-bone/40 group-hover:text-amber-300">
-                open brief ↗
+              <div className="mt-3 text-right font-mono text-[10px] uppercase tracking-widest text-bone/50 group-hover:text-amber-300">
+                read the story ↗
               </div>
             </Link>
           </li>
@@ -194,33 +331,45 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
 
 /* ============== ARMORY ============== */
 function ArmoryContent() {
-  const groups: { key: keyof typeof stack; label: string; glyph: string; color: string }[] = [
-    { key: "languages", label: "languages", glyph: "⌥", color: "border-rose-400/30 bg-rose-400/[0.04]" },
-    { key: "frontend", label: "frontend", glyph: "◐", color: "border-amber-300/30 bg-amber-300/[0.04]" },
-    { key: "backend", label: "backend", glyph: "◑", color: "border-emerald-400/30 bg-emerald-400/[0.04]" },
-    { key: "ai", label: "ai · ml", glyph: "✦", color: "border-violet-400/30 bg-violet-400/[0.04]" },
-    { key: "infra", label: "infra", glyph: "⊞", color: "border-sky-400/30 bg-sky-400/[0.04]" },
-    { key: "tools", label: "tools", glyph: "⚙", color: "border-bone/15 bg-bone/[0.04]" },
+  const groups: { key: keyof typeof stack; label: string; sub: string; glyph: string; color: string }[] = [
+    { key: "languages", label: "languages", sub: "what I write code in", glyph: "⌥", color: "border-rose-400/40 bg-rose-400/[0.06]" },
+    { key: "frontend", label: "frontend", sub: "what users see and click", glyph: "◐", color: "border-amber-300/40 bg-amber-300/[0.06]" },
+    { key: "backend", label: "backend", sub: "the server side", glyph: "◑", color: "border-emerald-400/40 bg-emerald-400/[0.06]" },
+    { key: "ai", label: "AI", sub: "anything model-based", glyph: "✦", color: "border-violet-400/40 bg-violet-400/[0.06]" },
+    { key: "infra", label: "infrastructure", sub: "where it runs", glyph: "⊞", color: "border-sky-400/40 bg-sky-400/[0.06]" },
+    { key: "tools", label: "tools", sub: "daily drivers", glyph: "⚙", color: "border-bone/20 bg-bone/[0.06]" },
   ];
 
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ armory · what i reach for
+    <div className="space-y-6">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ toolkit · what I reach for
+        </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          The toolkit.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          Tools I actually use on the daily. Grouped by job, not by hype.
+        </p>
       </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        the rack.
-      </h3>
-      <div className="mt-5 space-y-3">
+
+      <div className="space-y-3">
         {groups.map((g) => (
           <div key={g.key} className={`border ${g.color} p-4`}>
-            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone">
-              <span>{g.label}</span>
-              <span className="font-display text-lg text-bone">{g.glyph}</span>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone">{g.label}</div>
+                <div className="mt-0.5 font-sans text-[13px] text-bone/75">{g.sub}</div>
+              </div>
+              <span className="font-display text-lg text-bone/80">{g.glyph}</span>
             </div>
-            <ul className="mt-3 flex flex-wrap gap-1 font-mono text-xs">
+            <ul className="mt-3 flex flex-wrap gap-1.5 font-mono text-[12px]">
               {stack[g.key].map((item) => (
-                <li key={item} className="border border-bone/20 bg-black/40 px-2 py-1 text-bone">
+                <li key={item} className="border border-bone/25 bg-black/40 px-2 py-1 text-bone">
                   {item}
                 </li>
               ))}
@@ -237,11 +386,12 @@ function CoveContent({ onTuneAll }: { onTuneAll: () => void }) {
   const [tab, setTab] = useState<keyof typeof interests>("anime");
   const [tuned, setTuned] = useState<Set<keyof typeof interests>>(new Set(["anime"]));
 
-  const tabs: { key: keyof typeof interests; label: string; jp: string; color: string }[] = [
-    { key: "anime", label: "stories", jp: "物語", color: "border-rose-400/40 bg-rose-400/10 text-rose-200" },
-    { key: "games", label: "worlds", jp: "世界", color: "border-violet-400/40 bg-violet-400/10 text-violet-200" },
-    { key: "art", label: "vision", jp: "視覚", color: "border-amber-300/40 bg-amber-300/10 text-amber-200" },
-    { key: "science", label: "ideas", jp: "知識", color: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200" },
+  const tabs: { key: keyof typeof interests; label: string; color: string }[] = [
+    { key: "anime", label: "anime", color: "border-rose-400/50 bg-rose-400/15 text-rose-200" },
+    { key: "manga", label: "manga · manhwa", color: "border-amber-300/50 bg-amber-300/15 text-amber-200" },
+    { key: "games", label: "games", color: "border-violet-400/50 bg-violet-400/15 text-violet-200" },
+    { key: "music", label: "music", color: "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" },
+    { key: "shows", label: "shows", color: "border-sky-400/50 bg-sky-400/15 text-sky-200" },
   ];
 
   const items = interests[tab];
@@ -251,35 +401,42 @@ function CoveContent({ onTuneAll }: { onTuneAll: () => void }) {
     setTuned((s) => {
       const nx = new Set(s);
       nx.add(k);
-      if (nx.size === 4) onTuneAll();
+      if (nx.size === 5) onTuneAll();
       return nx;
     });
   };
 
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ frequencies · {tabs.length} channels
+    <div className="space-y-6">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ off-clock · what I'm into
+        </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          When I'm not coding.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          Tap a tab to see what I'm into in that lane.
+        </p>
       </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        what I tune into off-clock.
-      </h3>
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {tabs.map((t) => {
           const isActive = tab === t.key;
           return (
             <button
               key={t.key}
               onClick={() => onTab(t.key)}
-              className={`flex items-center gap-2 border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-all ${
+              className={`flex items-center gap-2 border px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-all ${
                 isActive
                   ? t.color
-                  : "border-bone/15 bg-bone/[0.02] text-bone/60 hover:border-bone/40 hover:text-bone"
+                  : "border-bone/20 bg-bone/[0.04] text-bone/75 hover:border-bone/50 hover:text-bone"
               }`}
             >
               <span>{t.label}</span>
-              <span className="opacity-60">{t.jp}</span>
               {tuned.has(t.key) && !isActive && <span className="text-emerald-400">✓</span>}
             </button>
           );
@@ -293,20 +450,22 @@ function CoveContent({ onTuneAll }: { onTuneAll: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="mt-5 space-y-2"
+          className="space-y-2.5"
         >
           {items.map((it, i) => (
-            <li key={it.title} className="border border-bone/10 bg-bone/[0.02] p-3">
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-bone/50">
+            <li key={it.title} className="border border-bone/15 bg-bone/[0.04] px-3.5 py-2.5">
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-bone/60">
                 <span>#{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-amber-300/70">{it.tag}</span>
+                <span className="text-amber-300/80">{it.tag}</span>
               </div>
-              <div className="mt-2 font-display text-base uppercase tracking-wider text-bone">
+              <div className="mt-1.5 font-sans text-[15px] font-medium text-bone">
                 {it.title}
               </div>
-              <p className="mt-1 font-serif text-sm italic leading-snug text-bone">
-                {it.note}
-              </p>
+              {it.note && (
+                <p className="mt-1 font-sans text-[14px] leading-relaxed text-bone/85">
+                  {it.note}
+                </p>
+              )}
             </li>
           ))}
         </motion.ul>
@@ -315,106 +474,121 @@ function CoveContent({ onTuneAll }: { onTuneAll: () => void }) {
   );
 }
 
-/* ============== DECK ============== */
+/* ============== DECK — quick glance ============== */
 function DeckContent() {
+  const shipped = projects.filter((p) => p.status === "shipped").length;
+  const active = projects.filter((p) => p.status === "active" || p.status === "shipping").length;
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ deck · live readouts · updated {now.updated}
+    <div className="space-y-6">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ status · quick glance · updated {now.updated}
+        </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          The short version.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          One-glance snapshot. Where I am, what I&apos;m on, what I&apos;m open to.
+        </p>
       </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        currently building.
-      </h3>
 
-      <div className="mt-6 space-y-3">
-        <div className="border border-amber-300/40 bg-amber-300/[0.06] p-5">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-            ▸ on the bench
+      {/* Quick stats */}
+      <div className="grid grid-cols-3 gap-2 font-mono text-xs">
+        {[
+          ["projects shipped", String(shipped)],
+          ["currently active", String(active)],
+          ["based in", now.location.split(",")[0]],
+        ].map(([k, v]) => (
+          <div key={k} className="border border-bone/20 bg-bone/[0.04] px-3 py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.3em] text-bone/60">{k}</div>
+            <div className="mt-1 font-sans text-[15px] font-medium text-bone">{v}</div>
           </div>
-          <ul className="mt-4 space-y-3 font-serif text-lg leading-snug text-bone">
-            {now.building.map((line, i) => (
-              <li key={i} className="flex gap-4">
-                <span className="font-mono text-sm font-bold text-amber-300">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        ))}
+      </div>
 
-        <div className="border border-rose-400/40 bg-rose-400/[0.06] p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-rose-300">▸ reading</div>
-          <ul className="mt-2 space-y-1 font-serif text-base italic text-bone">
-            {now.reading.map((b) => <li key={b}>· {b}</li>)}
-          </ul>
+      {/* This week */}
+      <div className="border border-amber-300/40 bg-amber-300/[0.10] px-4 py-3">
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">this week</div>
+        <div className="mt-1.5 font-sans text-[16px] leading-relaxed text-bone">{now.focus}</div>
+      </div>
+
+      {/* What I'm open to */}
+      <div className="border-l-2 border-emerald-300/60 pl-4">
+        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-300">
+          ▸ open to · what I&apos;ll say yes to
         </div>
-        <div className="border border-violet-400/40 bg-violet-400/[0.06] p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-300">▸ listening</div>
-          <ul className="mt-2 space-y-1 font-serif text-base italic text-bone">
-            {now.listening.map((b) => <li key={b}>· {b}</li>)}
-          </ul>
-        </div>
-        <div className="border border-bone/20 bg-bone/[0.04] p-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone">
-          node · {now.location} · last update {now.updated}
-        </div>
+        <ul className="space-y-2 font-sans text-[14px] leading-relaxed text-bone">
+          <li className="flex gap-2.5"><span className="text-emerald-300">▸</span><span>Full-time roles that ship things real users touch.</span></li>
+          <li className="flex gap-2.5"><span className="text-emerald-300">▸</span><span>Contract work — web, mobile, or AI builds with a clear endpoint.</span></li>
+          <li className="flex gap-2.5"><span className="text-emerald-300">▸</span><span>Cofounder conversations if the idea is small enough to ship and big enough to matter.</span></li>
+        </ul>
+      </div>
+
+      <div className="border border-bone/20 bg-bone/[0.04] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85">
+        node · {now.location} · last update {now.updated}
       </div>
     </div>
   );
 }
 
-/* ============== SUMMIT ============== */
+/* ============== SUMMIT — contact ============== */
 function SummitContent({ onLink }: { onLink: () => void }) {
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-        ▸ comms · channel open
-      </div>
-      <h3 className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        ping me back.
-      </h3>
-
-      <div className="mt-6 space-y-5">
-        <p className="font-serif text-lg leading-[1.7] text-bone">
-          Best way to reach me is <em className="text-amber-300">email</em>. I read everything, reply to most. Currently open to interesting full-time roles, contract work, and the occasional cofounder conversation.
-        </p>
-
-        <a
-          href="mailto:hello@samar.dev"
-          onClick={onLink}
-          className="group block w-full border-2 border-amber-300/60 bg-amber-300/[0.08] px-5 py-4 text-center font-serif text-2xl italic text-bone hover:bg-amber-300/15 hover:text-amber-300"
-        >
-          <span className="underline decoration-amber-300/40 underline-offset-4 group-hover:decoration-amber-300">
-            hello@samar.dev
-          </span>
-          <span className="ml-2 font-mono text-sm not-italic text-amber-300">↗</span>
-        </a>
-
-        <div className="space-y-2 font-mono text-xs">
-          {[
-            { label: "github", value: "@samarnarangi", href: "https://github.com/samarnarangi" },
-            { label: "x / twitter", value: "@samarnarangi", href: "https://x.com/samarnarangi" },
-            { label: "linkedin", value: "samarnarangi", href: "https://linkedin.com/in/samarnarangi" },
-            { label: "resume", value: "download.pdf", href: "/resume.pdf" },
-          ].map((c) => (
-            <a
-              key={c.label}
-              href={c.href}
-              target={c.href.startsWith("http") ? "_blank" : undefined}
-              rel="noreferrer"
-              className="group flex items-center justify-between border border-bone/20 bg-bone/[0.04] px-3 py-2 transition-colors hover:border-amber-300/60 hover:bg-amber-300/[0.08]"
-            >
-              <span className="flex flex-col">
-                <span className="text-[9px] uppercase tracking-[0.3em] text-bone">{c.label}</span>
-                <span className="text-bone group-hover:text-amber-300">{c.value}</span>
-              </span>
-              <span className="text-bone/60 transition-transform group-hover:translate-x-1 group-hover:text-amber-300">↗</span>
-            </a>
-          ))}
+    <div className="space-y-6">
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+          ▸ contact · reach out
         </div>
+        <h3
+          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          Say hi.
+        </h3>
+        <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
+          Best way is email. I read everything and reply to most. Right now I&apos;m open to full-time roles, contract work, and the occasional cofounder chat.
+        </p>
       </div>
 
-      <div className="mt-6 border-t border-bone/15 pt-4 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone">
+      <a
+        href="mailto:singhsamar2002@gmail.com"
+        onClick={onLink}
+        className="group block w-full border-2 border-amber-300/60 bg-amber-300/[0.10] px-5 py-4 text-center font-sans text-[20px] text-bone hover:bg-amber-300/20 hover:text-amber-300"
+      >
+        <span className="underline decoration-amber-300/40 underline-offset-4 group-hover:decoration-amber-300">
+          singhsamar2002@gmail.com
+        </span>
+        <span className="ml-2 font-mono text-sm text-amber-300">↗</span>
+      </a>
+
+      <div className="space-y-2">
+        {[
+          { label: "github", value: "@SamarS1ngh", href: "https://github.com/SamarS1ngh" },
+          { label: "linkedin", value: "samarsingh14", href: "https://www.linkedin.com/in/samarsingh14/" },
+          { label: "x / twitter", value: "@Samar_S1ngh", href: "https://x.com/Samar_S1ngh" },
+          { label: "instagram", value: "@samar_sin_", href: "https://www.instagram.com/samar_sin_/" },
+          { label: "resume", value: "download PDF", href: "/resume.pdf" },
+        ].map((c) => (
+          <a
+            key={c.label}
+            href={c.href}
+            target={c.href.startsWith("http") ? "_blank" : undefined}
+            rel="noreferrer"
+            className="group flex items-center justify-between border border-bone/20 bg-bone/[0.04] px-3.5 py-2.5 transition-colors hover:border-amber-300/60 hover:bg-amber-300/[0.10]"
+          >
+            <span className="flex flex-col">
+              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/70">{c.label}</span>
+              <span className="mt-0.5 font-sans text-[15px] text-bone group-hover:text-amber-300">{c.value}</span>
+            </span>
+            <span className="text-bone/60 transition-transform group-hover:translate-x-1 group-hover:text-amber-300">↗</span>
+          </a>
+        ))}
+      </div>
+
+      <div className="border-t border-bone/20 pt-4 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
         © 2026 · node HYD-001
       </div>
     </div>

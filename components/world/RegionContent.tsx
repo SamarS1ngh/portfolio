@@ -26,7 +26,7 @@ export function RegionContent({
   return (
     <div
       data-region-content
-      className="pointer-events-auto fixed right-4 top-1/2 z-20 w-[min(92vw,540px)] max-h-[72vh] -translate-y-1/2 overflow-hidden border-2 border-amber-300/30 bg-[#04060e]/96 shadow-[0_30px_80px_rgba(0,0,0,0.7),0_0_40px_rgba(255,213,74,0.08)] md:right-8"
+      className="pointer-events-auto fixed right-2 top-1/2 z-20 w-[min(94vw,480px)] max-h-[78vh] -translate-y-1/2 overflow-hidden border-2 border-amber-300/30 bg-[#04060e]/96 shadow-[0_30px_80px_rgba(0,0,0,0.7),0_0_40px_rgba(255,213,74,0.08)] sm:right-4 md:right-6 lg:w-[min(92vw,520px)] xl:right-8 xl:w-[min(92vw,540px)] xl:max-h-[72vh]"
     >
       {/* Corner brackets */}
       <span className="pointer-events-none absolute -top-px -left-px h-3 w-3 border-l-2 border-t-2 border-amber-300/80" />
@@ -45,18 +45,32 @@ export function RegionContent({
 
       <div
         data-region-content-scroll
-        className="overflow-y-auto px-6 py-7 md:px-8"
-        style={{ maxHeight: "calc(72vh - 42px)" }}
+        className="overflow-y-auto px-5 py-6 sm:px-6 sm:py-7 md:px-8"
+        style={{ maxHeight: "calc(78vh - 42px)" }}
       >
-        {kind === "origin" && <OriginContent />}
-        {kind === "notebook" && <NotebookContent onRead={() => onMarkQuest("R1:read")} />}
-        {kind === "missions" && <MissionsContent onInspect={() => onMarkQuest("R2:inspect")} />}
-        {kind === "armory" && <ArmoryContent />}
-        {kind === "cove" && <CoveContent onTuneAll={() => onMarkQuest("R4:tune")} />}
-        {kind === "deck" && <DeckContent />}
-        {kind === "summit" && <SummitContent onLink={() => onMarkQuest("R6:link")} />}
+        <RegionContentInner kind={kind} onMarkQuest={onMarkQuest} />
       </div>
     </div>
+  );
+}
+
+export function RegionContentInner({
+  kind,
+  onMarkQuest,
+}: {
+  kind: "origin" | "notebook" | "missions" | "armory" | "cove" | "deck" | "summit";
+  onMarkQuest: (id: string) => void;
+}) {
+  return (
+    <>
+      {kind === "origin" && <OriginContent />}
+      {kind === "notebook" && <NotebookContent onRead={() => onMarkQuest("R1:read")} />}
+      {kind === "missions" && <MissionsContent onInspect={() => onMarkQuest("R2:inspect")} />}
+      {kind === "armory" && <ArmoryContent />}
+      {kind === "cove" && <CoveContent onTuneAll={() => onMarkQuest("R4:tune")} />}
+      {kind === "deck" && <DeckContent />}
+      {kind === "summit" && <SummitContent onLink={() => onMarkQuest("R6:link")} />}
+    </>
   );
 }
 

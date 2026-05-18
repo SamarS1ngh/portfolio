@@ -179,3 +179,19 @@ body {
   text-shadow: 0 6px 30px rgba(0,0,0,0.3);
 }
 
+/* Region headline — fade out on the right edge so it doesn't bleed into the side panel.
+   Visible across the left half of the viewport, transparent where the panel sits.
+   Tuned for the 480-540px wide panel anchored to the right. */
+@media (min-width: 1024px) {
+  .region-headline {
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 55%, transparent 75%);
+            mask-image: linear-gradient(to right, black 0%, black 55%, transparent 75%);
+  }
+}
+@media (min-width: 1280px) {
+  .region-headline {
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 60%, transparent 78%);
+            mask-image: linear-gradient(to right, black 0%, black 60%, transparent 78%);
+  }
+}
+

@@ -12,6 +12,7 @@ import { CursorTrail } from "@/components/world/CursorTrail";
 import { loadSaved, saveState, readUrlRegion, writeUrlRegion } from "@/lib/persist";
 
 const Stack3D = dynamic(() => import("@/components/world/Stack3D").then((m) => m.Stack3D), { ssr: false });
+const MobileWorld = dynamic(() => import("@/components/world/MobileWorld").then((m) => m.MobileWorld), { ssr: false });
 
 const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
 
@@ -22,6 +23,23 @@ let entryCounter = 0;
 const REGION_HEIGHT_VH = 180;
 
 export default function World() {
+  // Switch to mobile layout below 1024px — single-axis scroll, no 3D, simpler nav.
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  if (isMobile === null) return null; // wait for hydration to avoid flashing the wrong layout
+  if (isMobile) return <MobileWorld />;
+
+  return <DesktopWorld />;
+}
+
+function DesktopWorld() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: scrollRef });
 
@@ -213,10 +231,10 @@ export default function World() {
   const overallPct = ((chamberIdx + scrub) / regions.length) * 100;
 
   // Story beats within a region: 0..1 scrub → reveal phase
-  // Smooth bell curve — content visible from 0.10→0.95 with eased edges (no double-dip near boundary).
+  // Sequential: headline first (0..0.20), then content (0.22..0.92). No overlap → no bleed-through.
   const showHeadline = scrub < 0.22 || !showContent;
   const contentOpacity = showContent
-    ? smoothstep(0.06, 0.22, scrub) * (1 - smoothstep(0.92, 1.0, scrub))
+    ? smoothstep(0.22, 0.34, scrub) * (1 - smoothstep(0.92, 1.0, scrub))
     : 0;
   const outroHint = scrub > 0.88 && chamberIdx < regions.length - 1;
   const introHint = scrub < 0.05 && chamberIdx > 0;
@@ -340,7 +358,7 @@ export default function World() {
             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
             samar.dev · z-NAV
           </span>
-          <span className="hidden md:flex items-center gap-3">
+          <span className="hidden lg:flex items-center gap-3">
             <span className="text-bone/40">region</span>
             <span className="text-amber-300">{r.glyph}</span>
             <span className="text-bone">{r.region}</span>
@@ -374,7 +392,7 @@ export default function World() {
         </div>
 
         {/* MINI-MAP — top center */}
-        <aside className="pointer-events-auto absolute left-1/2 top-14 z-30 hidden -translate-x-1/2 md:block">
+        <aside className="pointer-events-auto absolute left-1/2 top-14 z-30 hidden -translate-x-1/2 xl:block">
           <div className="rounded border border-bone/15 bg-black/60 p-2 backdrop-blur-md">
             <div className="mb-1 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50">
               <span>world map · {visited.size}/{regions.length}</span>
@@ -413,7 +431,7 @@ export default function World() {
         </aside>
 
         {/* QUEST LOG — stacked per-region, scroll-linked crossfade */}
-        <aside className="absolute left-6 top-[180px] z-30 hidden md:block w-[260px]">
+        <aside className="absolute left-6 top-[180px] z-30 hidden 2xl:block w-[260px]">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             quests · this region
           </div>
@@ -451,7 +469,7 @@ export default function World() {
         </aside>
 
         {/* COORDS */}
-        <aside className="absolute left-6 top-16 z-30 hidden md:block">
+        <aside className="absolute left-6 top-16 z-30 hidden 2xl:block">
           <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             coords · live
           </div>
@@ -464,7 +482,7 @@ export default function World() {
         </aside>
 
         {/* FAST-TRAVEL */}
-        <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden md:block">
+        <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden 2xl:block">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             fast-travel
           </div>
@@ -491,8 +509,8 @@ export default function World() {
           </ul>
         </aside>
 
-        {/* READOUT — stacked per-region, scroll-linked crossfade */}
-        <aside className="absolute left-6 bottom-[420px] z-30 hidden md:block w-[240px]">
+        {/* READOUT — top-anchored, sits between quest log and fast-travel */}
+        <aside className="absolute left-6 top-[340px] z-30 hidden 2xl:block w-[240px]">
           <div className="mb-2 text-right font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             readout
           </div>
@@ -529,7 +547,7 @@ export default function World() {
             i={i}
             f={fProgress}
             infoVisible={showContent}
-            className="absolute left-0 right-0 top-1/2 z-20 -translate-y-1/2 px-6 text-center md:px-12"
+            className="region-headline absolute left-0 right-0 top-1/2 z-10 hidden -translate-y-1/2 px-6 text-center lg:block lg:px-12"
           >
             <div className="font-mono text-[10px] uppercase tracking-[0.4em] text-amber-300">
               — chapter {i + 1} / {regions.length} —
@@ -538,7 +556,7 @@ export default function World() {
               {reg.biome}
             </div>
             <h2
-              className="mt-5 font-light text-3xl uppercase tracking-tight text-bone md:text-6xl lg:text-7xl"
+              className="mt-5 font-light text-4xl uppercase tracking-tight text-bone lg:text-5xl xl:text-7xl"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               {reg.region}
@@ -611,7 +629,7 @@ export default function World() {
         </AnimatePresence>
 
         {/* === NMS-STYLE HEX REGION MARKER — stacked, scroll-linked crossfade === */}
-        <div className="absolute left-1/2 bottom-32 z-30 w-[min(94vw,560px)] -translate-x-1/2">
+        <div className="absolute left-1/2 bottom-28 z-30 hidden w-[min(94vw,560px)] -translate-x-1/2 lg:block">
           {regions.map((reg, i) => (
             <RegionLayer
               key={reg.code + "-hexmark"}
@@ -891,7 +909,7 @@ function TerminalLog({ log }: { log: LogEntry[] }) {
     info: "text-bone/70", ok: "text-emerald-300", warn: "text-amber-300", cmd: "text-sky-300",
   };
   return (
-    <div className="absolute left-0 right-0 bottom-0 z-30 border-t border-bone/10 bg-black/60 backdrop-blur-md">
+    <div className="absolute left-0 right-0 bottom-0 z-30 hidden border-t border-bone/10 bg-black/60 backdrop-blur-md md:block">
       <div className="flex items-center justify-between border-b border-bone/10 px-6 py-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50 md:px-12">
         <span className="flex items-center gap-2">
           <span className="text-emerald-300">$</span>

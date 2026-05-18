@@ -98,9 +98,15 @@ function Stage({
     camera.position.y += (ay - camera.position.y) * 0.1;
     camera.position.z += (az - camera.position.z) * 0.1;
 
-    const lx = lerp(SCENE_X[idx], SCENE_X[nextIdx], Math.min(1, localP + 0.3));
-    const ly = lerp(SCENE_Y[idx], SCENE_Y[nextIdx], Math.min(1, localP + 0.3));
-    const lz = lerp(SCENE_Z(idx), SCENE_Z(nextIdx), Math.min(1, localP + 0.3));
+    // Camera look-ahead: 0.3 of a segment past the camera, computed in continuous global progress
+    // so it doesn't snap at idx boundaries (old `localP + 0.3` capped at 1 caused a jump).
+    const lookGlobal = p * TOTAL + 0.3;
+    const lookIdx = Math.min(Math.max(0, Math.floor(lookGlobal)), TOTAL - 1);
+    const lookNextIdx = Math.min(lookIdx + 1, TOTAL - 1);
+    const lookLocal = Math.max(0, Math.min(1, lookGlobal - lookIdx));
+    const lx = lerp(SCENE_X[lookIdx], SCENE_X[lookNextIdx], lookLocal);
+    const ly = lerp(SCENE_Y[lookIdx], SCENE_Y[lookNextIdx], lookLocal);
+    const lz = lerp(SCENE_Z(lookIdx), SCENE_Z(lookNextIdx), lookLocal);
     camera.lookAt(lx, ly, lz);
 
     camera.rotation.z = Math.sin(p * Math.PI * 1.5) * 0.04;
@@ -463,8 +469,9 @@ function ScrubNode({ pos, idx, count, progressRef }: { pos: [number, number, num
     if (!ref.current) return;
     const lp = localProgress(progressRef.current, 1);
     const threshold = idx / count;
-    const visScale = lp < threshold ? 0 : Math.min(1, (lp - threshold) * 6);
-    ref.current.scale.setScalar(baseScale * visScale);
+    // Always visible at half size; lp drives growth so the scene reads as alive on entry.
+    const grow = lp < threshold ? 0 : Math.min(1, (lp - threshold) * 6);
+    ref.current.scale.setScalar(baseScale * (0.5 + 0.5 * grow));
   });
   return (
     <mesh ref={ref} position={pos}>
@@ -487,11 +494,12 @@ function SchematicScene({ progressRef }: { progressRef: React.MutableRefObject<n
     if (inner.current) {
       inner.current.rotation.x = lp * Math.PI * 2;
       inner.current.rotation.y = lp * Math.PI;
-      inner.current.scale.setScalar(0.6 + lp * 0.4);
+      // Keep base size so the scene reads as "already there" when the camera arrives.
+      inner.current.scale.setScalar(0.85 + lp * 0.15);
     }
     if (inner2.current) {
       inner2.current.rotation.z = -lp * Math.PI * 1.6;
-      inner2.current.scale.setScalar(Math.max(0.05, lp * 0.9));
+      inner2.current.scale.setScalar(0.6 + lp * 0.4);
     }
   });
   return (
@@ -540,9 +548,10 @@ function PeriodicScene({ progressRef }: { progressRef: React.MutableRefObject<nu
     tilesRef.current.forEach((m, i) => {
       if (!m) return;
       const threshold = i / all.length;
-      const t = lp < threshold ? 0 : Math.min(1, (lp - threshold) * 5);
-      m.rotation.y = (1 - t) * Math.PI;
-      m.scale.setScalar(t);
+      const grow = lp < threshold ? 0 : Math.min(1, (lp - threshold) * 5);
+      // Half-size baseline so the rack reads as present when the camera arrives.
+      m.rotation.y = (1 - grow) * Math.PI;
+      m.scale.setScalar(0.5 + 0.5 * grow);
     });
   });
   return (
@@ -584,12 +593,13 @@ function ConstellationScene({ progressRef }: { progressRef: React.MutableRefObje
     for (let i = 0; i < N; i++) {
       const s = seeds[i];
       const clusterReveal = (s.cluster + 1) / 4;
-      const visible = lp >= clusterReveal - 0.25;
-      const localCluster = Math.min(1, Math.max(0, (lp - (clusterReveal - 0.25)) * 4));
-      const r = visible ? s.r * localCluster : 0;
+      const grow = Math.min(1, Math.max(0, (lp - (clusterReveal - 0.25)) * 4));
+      // Half-spread baseline so all four clusters read as present on entry; lp opens them up.
+      const spread = 0.5 + 0.5 * grow;
+      const r = s.r * spread;
       positionsRef[i * 3 + 0] = s.cx + Math.cos(s.a) * r;
       positionsRef[i * 3 + 1] = s.cy + Math.sin(s.a) * r;
-      positionsRef[i * 3 + 2] = s.z * localCluster;
+      positionsRef[i * 3 + 2] = s.z * spread;
       const c = palette[s.cluster];
       colorsRef[i * 3 + 0] = c.r; colorsRef[i * 3 + 1] = c.g; colorsRef[i * 3 + 2] = c.b;
     }

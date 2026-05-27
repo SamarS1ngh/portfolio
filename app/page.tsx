@@ -824,12 +824,6 @@ function HudCorners() {
       <EdgeTicks side="left" />
       <EdgeTicks side="right" />
 
-      {/* Top-left ornament · JARVIS-style identifier block */}
-      <div className="pointer-events-none absolute left-3 top-[50px] z-20 flex flex-col gap-px font-mono text-[8px] uppercase tracking-[0.35em] text-amber-300/55">
-        <span>sys · z-nav</span>
-        <span className="text-amber-300/30">∎ ∎ ∎ ∎ ∎</span>
-      </div>
-
       {/* Top-right ornament · system stat hex */}
       <svg viewBox="0 0 40 36" className="pointer-events-none absolute right-3 top-[50px] z-20 h-7 w-8 opacity-70">
         <polygon points="20,2 36,11 36,25 20,34 4,25 4,11" fill="none" stroke="#ffd54a" strokeWidth="0.8" strokeOpacity="0.55" />

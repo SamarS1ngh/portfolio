@@ -13,6 +13,7 @@ const Loading = () => (
 
 const demos = {
   jarvis: dynamic(() => import("./JarvisDemo"), { ssr: false, loading: Loading }),
+  nocap: dynamic(() => import("./NocapDemo"), { ssr: false, loading: Loading }),
 } as const;
 
 export function ProjectDemoSlot({ slug }: { slug: string }) {

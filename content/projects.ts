@@ -121,44 +121,89 @@ export const projects: Project[] = [
     name: "nocap",
     year: "2026",
     role: "solo · android + ml",
-    blurb: "ruthless notification filter",
-    tagline: "An app that uses AI to filter your phone notifications. Every swipe — accept or dismiss — teaches it what matters to you, so it gets sharper with each use.",
+    blurb: "a phone that learns your attention",
+    tagline: "Most filters block by rules. This one watches what you do — what you open fast, what you ignore, what you mute — and reshapes itself around you. Two weeks in, it knows you better than your settings.",
     stack: ["Kotlin", "Jetpack Compose", "NotificationListenerService", "Gemini Flash", "Room"],
     tags: ["mobile", "ai"],
     status: "shipping",
     problem:
       "Modern phones surface every Slack ping, every promo email, every group-chat reaction as if they were peer events. The default notification model is broken — and 'do not disturb' is a sledgehammer.",
     why:
-      "I'd open my phone to a wall of 47 notifications and miss the one from my landlord because it sat under a Discord raid ping. The phone vendors won't fix this because engagement metrics reward noise. Someone had to build the opt-out.",
+      "I'd open my phone to a wall of 47 notifications and miss the one from my landlord because it sat under a Discord raid ping. Phone makers won't fix this — engagement metrics reward noise. Someone had to build the opt-out.",
     architecture:
-      "NotificationListenerService captures every system notification → enrichment step pulls icon, package, prior swipe history → a small TFLite classifier handles the obvious cases on-device → ambiguous ones get queued in a batched call to Gemini Flash → bucket routing rules apply → Room persists everything, Compose renders a bucketed inbox separate from the system shade. Every accept/dismiss swipe writes a feedback row that drives a nightly fine-tune.",
+      "Every notification gets caught before your phone shows it. A small model on the device makes the easy calls in about ten milliseconds. The tricky ones get a quick cloud check. Each notification ends up with a priority score and a routing decision: alert you now, drop in the inbox, or stay silent. Every swipe you make becomes a vote — those votes nudge the model overnight.",
+    architectureMap: `┌────────────────────┐
+│ phone fires a      │
+│ notification       │
+└─────────┬──────────┘
+          ▼
+┌────────────────────┐
+│ on-device model    │── confident? ──► classify now
+│ ~3 MB · ~10 ms     │
+└─────────┬──────────┘
+          │ not sure
+          ▼
+┌────────────────────┐
+│ cloud check        │
+│ gemini · batched   │
+│ ~800 ms window     │
+└─────────┬──────────┘
+          ▼
+┌─────────────────────────────────────────┐
+│  priority score  +  routing             │
+│  alert  ·  inbox  ·  silent             │
+└──────────────────┬──────────────────────┘
+                   │ your swipe
+                   ▼
+┌─────────────────────────────────────────┐
+│  feedback log  →  overnight retrain     │
+│  the model gets a little smarter        │
+└─────────────────────────────────────────┘`,
     challenge:
-      "Latency budget. NotificationListenerService fires on the main loop — anything that touches the network has to be fast or the OS kills the service. Round-tripping every notification to Gemini would tank battery and blow the 5-second budget. Solution: local classifier first, Gemini only for the ~10% ambiguous tail, batched in 800ms windows.",
+      "Speed. Android's notification system fires on the main thread — if I'm slow, the OS kills my service. Calling the cloud on every notification would melt your battery and blow past the 5-second budget. The fix: handle most cases locally in milliseconds, batch the rest into 800ms cloud windows.",
+    challengeStats: [
+      { k: "local handle time", v: "~10 ms" },
+      { k: "cloud window", v: "800 ms" },
+      { k: "local accuracy", v: "~87%" },
+      { k: "cloud accuracy", v: "~96%" },
+    ],
     tradeoffs: [
-      "local model is cheaper and instant but caps at ~87% accuracy on edge cases vs Gemini's ~96%. Acceptable since we collapse, never delete.",
-      "Android only · Apple does not expose system-wide notification interception. Half the audience, gone.",
-      "we can't actually drop a notification post-firing — Android only lets you mute/group. So we display a separate inbox UI rather than hiding the system shade.",
+      "The on-device model is instant and free, but caps at ~87% on tricky cases. Cloud closes the gap at the cost of a bit of bandwidth.",
+      "Android only · iOS doesn't let apps see system notifications. Half the audience, gone.",
+      "Once Android shows a notification, we can't un-show it. So we collapse them into our own inbox instead of hiding the system shade.",
     ],
     scale:
-      "Per-user model lives on-device, ~3MB. Gemini Flash calls capped at ~50/day per active user. Cost per user under $0.20/mo at current pricing. If usage 10×s, the batching window widens — latency stays tolerable because non-urgent buckets don't care about a 2s delay.",
+      "Your model lives on your phone. About 3 MB. The cloud part stays under 20 cents per user per month — we cap calls at 50 a day. If usage explodes, the batching window just widens. The quiet buckets don't notice a small delay.",
+    scaleStats: [
+      { k: "on-device size", v: "3 MB" },
+      { k: "cloud calls cap", v: "50 / day" },
+      { k: "cost per user", v: "< $0.20 / mo" },
+      { k: "noise reduction", v: "~80%" },
+    ],
     future:
-      "Cross-device sync so 'urgent' on phone matches desktop. User-supplied few-shot examples in plain language ('treat anything from Mom as urgent'). Calendar-aware rules — auto-mute group chats during meetings.",
+      "Sync your priorities across devices. Tell it your rules in plain English. Calendar awareness so group chats go quiet during meetings.",
+    futureMilestones: [
+      { state: "wip", label: "behavior-aware ranking · learns from swipes" },
+      { state: "planned", label: "cross-device sync · phone + desktop" },
+      { state: "planned", label: "plain-english rules · 'mom is always urgent'" },
+      { state: "planned", label: "calendar mode · silence chats during meetings" },
+    ],
     decisions: [
       {
-        title: "Classify before display",
-        body: "Every incoming notification is intercepted, passed to Gemini Flash with a few-shot prompt, and tagged: urgent / informational / promotional / social / junk. User sees what matters; the rest gets bucketed.",
+        title: "Catch it before it fires",
+        body: "Every notification runs through a tiny model on your phone before Android can ring you. Takes about ten milliseconds. That early intercept is the whole moat — we get the first look at everything.",
       },
       {
-        title: "Summarize, don't bury",
-        body: "Promotional + social aren't deleted — they're collapsed into a periodic digest. Browseable on-demand, never interrupting.",
+        title: "Group it, don't ghost it",
+        body: "Promos and social pings don't get deleted. They collapse into a quiet inbox you can open whenever. Nothing important hides; nothing junky interrupts.",
       },
       {
-        title: "Gemini Flash for cost",
-        body: "Hundreds of notifications per day per user means classification has to be cheap. Flash hits the latency + price point. Local LLM fallback planned.",
+        title: "Cheap cloud, smart fallback",
+        body: "The on-device model handles the obvious 90% for free. The tricky 10% get a quick cloud call. Cost stays under 20 cents per user per month — runs forever on a free tier for small users.",
       },
     ],
     outcome:
-      "Personal phone gets ~80% fewer interrupting notifications. Group-chat noise basically silenced. Beta with a small user pool.",
+      "About 80% fewer interrupting notifications on my own phone. Group chats basically gone unless someone @s me. Quiet beta with a few friends — they all say the same thing: 'I forgot my phone could be this calm.'",
     repo: "https://github.com/SamarS1ngh",
     heroVideo: "/reels/nocap.mp4",
     heroPoster: "/reels/nocap.jpg",

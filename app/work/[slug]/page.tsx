@@ -5,7 +5,7 @@ import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
 
-const SLUGS_WITH_DEMO = new Set(["jarvis"]);
+const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap"]);
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -60,7 +60,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
       {/* Top HUD */}
       <header className="relative z-20 border-b border-bone/15 bg-black/50 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85 md:px-8">
+        <div className="mx-auto flex max-w-[1720px] flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85 md:px-8">
           <Link href="/" className="flex items-center gap-2 hover:text-amber-300">
             <span>←</span>
             <span className="text-bone">samar.dev</span>
@@ -82,7 +82,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           <div className="absolute -left-10 bottom-10 h-60 w-60 rounded-full bg-violet-500/15 blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-[1440px] px-4 pt-16 pb-20 md:px-8 md:pt-24 md:pb-28">
+        <div className="relative mx-auto max-w-[1720px] px-4 pt-16 pb-20 md:px-8 md:pt-24 md:pb-28">
           <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
             <span>▸ mission brief · {p.slug}</span>
             <span className="text-amber-300">[ declassified ]</span>
@@ -123,7 +123,7 @@ export default function Page({ params }: { params: { slug: string } }) {
       </section>
 
       {/* Wide showcase — interactive simulator takes the slot when it exists; reel only when there's actual footage */}
-      <section className="relative z-10 mx-auto w-full max-w-[1440px] px-4 py-12 md:px-8 md:py-16">
+      <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
         {SLUGS_WITH_DEMO.has(p.slug) ? (
           <WideSection index="00" label="play · interactive simulator">
             <div className="space-y-4">

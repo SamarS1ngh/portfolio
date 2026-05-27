@@ -26,10 +26,11 @@ export function RegionContent({
   return (
     <div
       data-region-content
-      className="pointer-events-auto fixed right-2 top-1/2 z-20 w-[min(94vw,480px)] max-h-[78vh] -translate-y-1/2 overflow-hidden border border-bone/15 shadow-[0_30px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-200 sm:right-4 md:right-6 lg:w-[min(92vw,520px)] xl:right-8 xl:w-[min(92vw,540px)] xl:max-h-[72vh]"
+      className="pointer-events-auto fixed right-2 top-1/2 z-20 max-h-[78vh] -translate-y-1/2 overflow-hidden border border-bone/15 shadow-[0_30px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-200 sm:right-4 md:right-6 xl:right-8 xl:max-h-[72vh]"
       style={{
         background:
           "linear-gradient(to bottom right, rgba(255,255,255,0.10), rgba(255,255,255,0.04), transparent), rgba(4,6,14,0.85)",
+        width: "min(94vw, clamp(360px, 31vw, 600px))",
       }}
     >
       {/* Corner brackets */}

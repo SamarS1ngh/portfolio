@@ -214,44 +214,82 @@ export const projects: Project[] = [
     year: "2025—",
     role: "co-build · full-stack",
     blurb: "open-core enterprise OS",
-    tagline: "Four interlocking modules — SSO, Org, PM, Ledger — that talk to each other out of the box.",
+    tagline: "Four interlocking modules — SSO (auth), Org (people), PM (tickets), Ledger (docs & wiki) — that talk to each other out of the box. One identity plane, four products.",
     stack: ["TypeScript", "Next.js", "Postgres", "Drizzle", "tRPC", "Tailwind"],
     tags: ["web", "saas", "infra"],
     status: "active",
     problem:
-      "Small teams paying for Okta + Notion + Linear + QuickBooks isn't a stack — it's a tax. Each tool reinvents identity, permissions, and audit trails badly.",
+      "Small teams paying for Okta + Rippling + Linear + Notion isn't a stack — it's a tax. Each tool reinvents identity, permissions, and audit trails badly. Onboarding a new hire means five logins and three role tables.",
     why:
-      "I watched a 12-person company spend $4k/mo on overlapping SaaS just to function. The integration tax was invisible but real — every tool had its own user table, its own RBAC model, its own half-broken audit log. An open-core kit that ships those primitives once cuts the bill and removes the seams.",
+      "Watched a 12-person company spend ~$4k/mo on overlapping SaaS just to function. The integration tax was invisible but real — every tool had its own user table, its own RBAC model, its own half-broken audit log. An open-core kit that ships those primitives once cuts the bill and removes the seams.",
     architecture:
-      "Four standalone repos, each independently deployable. SSO module owns the JWT issuer and JWKS endpoint. Org module owns user/team/role tables and exposes a tRPC API everyone else calls. PM and Ledger are stateless consumers — they trust SSO-signed JWTs and ask Org for permission checks. Postgres per module, no cross-module joins. Drizzle schema lives in a shared internal package so types flow end-to-end.",
+      "Four standalone repos, each independently deployable. SSO module owns the JWT issuer and JWKS endpoint. Org module owns user/team/role tables and exposes a tRPC API the other modules call. PM and Ledger are stateless consumers — they trust SSO-signed JWTs and ask Org for permission checks. Postgres per module, no cross-module joins. Drizzle schema lives in a shared internal package so types flow end-to-end from DB to UI.",
     challenge:
-      "Keeping the modules independent enough to self-host one but coupled enough that identity and permissions are actually shared instead of re-implemented per app. The right shape took three attempts — I tried a shared monolith DB (too coupled), then per-module event bus (too async), and landed on tRPC gateway calls with short-lived JWTs (sync where it matters, decoupled where it doesn't).",
+      "Keeping the modules independent enough to self-host one but coupled enough that identity and permissions are actually shared instead of re-implemented per app. The right shape took three attempts — shared monolith DB (too coupled), per-module event bus (too async), landed on tRPC gateway calls with short-lived JWTs (sync where it matters, decoupled where it doesn't). Took two weeks of refactoring to land cleanly.",
     tradeoffs: [
-      "monorepo dx vs multi-repo deploy autonomy · went multi-repo. Customers can deploy just Ledger if that's all they need. Cost: duplicated CI config across four repos.",
+      "monorepo dx vs multi-repo deploy autonomy · went multi-repo. Companies can deploy just Ledger if that's all they need. Cost: duplicated CI config across four repos.",
       "tRPC end-to-end types vs language portability · pinned to TypeScript. Future Go/Python clients would have to hand-write request shapes.",
       "open-core means feature-gating. Kept that surface tiny on purpose (audit log retention, SSO enterprise connectors) so OSS users get a real product.",
     ],
     scale:
-      "Each module sits comfortably at 10k MAU on a $20 box. Postgres is the first wall — connection pooling via pgBouncer landed after teacher-pau hit it first. Audit tables partitioned monthly. Cross-module reads cached at the gateway with 60s TTL since RBAC rarely changes between requests.",
+      "Each module sits comfortably at 10k MAU on a $20 box. Postgres is the first wall — pgBouncer landed when teacher-pau hit it first. Audit tables partitioned monthly. Cross-module reads cached at the gateway with 60s TTL since RBAC rarely changes between requests.",
     future:
-      "Workflow module (the Notion-ish doc-and-task one). Mobile shell on React Native sharing the tRPC client. Self-hosted control plane so customers can deploy and upgrade individual modules from a single dashboard without leaving their VPC.",
+      "Realtime collab in Ledger (multiplayer cursors + block CRDT). Mobile shell on React Native sharing the tRPC client. Self-hosted control plane so companies can deploy and upgrade individual modules from a single dashboard without leaving their VPC.",
     decisions: [
       {
         title: "Four modules, one identity plane",
-        body: "SSO sits underneath everything. Org defines people + permissions once. PM and Ledger consume both — no per-app user table, no per-app role model.",
+        body: "Replace four SaaS tools, not one. SSO sits underneath everything. Org defines people + permissions once. PM and Ledger consume both — no per-app user table, no per-app role model. Onboarding a new hire is one form, four products.",
       },
       {
         title: "Open-core, self-host first",
-        body: "Each module is a standalone repo with its own deploy. Companies who want to host themselves get the full thing. Cloud is a convenience layer, not a moat.",
+        body: "Companies that want to own their stack get the full thing — every module is a standalone repo with its own deploy. Cloud is an optional convenience, not a moat.",
       },
       {
         title: "tRPC + Drizzle for end-to-end types",
-        body: "Schema → DB → server → client without leaving TypeScript. Lets a tiny team move at the pace of a big one.",
+        body: "Schema → DB → server → client without leaving TypeScript. A two-person team can ship at the pace of a small company. Refactors stay safe end-to-end.",
       },
     ],
     outcome:
-      "All four modules in active dev. SSO + Org production-ready. PM in beta with internal users. Ledger scaffolded.",
-    liveUrl: "https://organization.easyenterpriseos.com",
+      "All four modules in active dev. SSO + Org production-ready and running daily with internal users. PM in beta. Ledger scaffolded. Open-core repos getting traction with early adopters.",
+    architectureMap: `┌──────────┐
+│ browser  │
+│ (client) │
+└────┬─────┘
+     │ login
+     ▼
+┌──────────┐        ┌──────────┐
+│   SSO    │───►───▶│   ORG    │
+│ jwt+jwks │  user  │ rbac+ppl │
+└────┬─────┘ sync   └────┬─────┘
+     │                   │
+     │ jwks              │ can(u, perm)?
+     ▼                   ▼
+┌──────────┐        ┌────────────┐
+│    PM    │───────▶│   LEDGER   │
+│ tickets  │ link   │ docs · wiki│
+└──────────┘  doc   └────────────┘
+       one signed JWT
+       one audit trail
+       four independent deploys`,
+    challengeStats: [
+      { k: "modules shipped", v: "3 / 4" },
+      { k: "shape rewrites", v: "3" },
+      { k: "refactor weeks", v: "~2" },
+      { k: "shared db joins", v: "0" },
+    ],
+    scaleStats: [
+      { k: "per-module box", v: "$20 / mo" },
+      { k: "headroom", v: "10k MAU" },
+      { k: "rbac cache ttl", v: "60s" },
+      { k: "deploys", v: "4 repos" },
+    ],
+    futureMilestones: [
+      { state: "wip", label: "PM module · beta with internal users" },
+      { state: "planned", label: "ledger · realtime collab (block CRDT)" },
+      { state: "planned", label: "react native shell · share trpc client" },
+      { state: "planned", label: "self-host control plane · one dashboard" },
+    ],
+    liveUrl: "https://www.easyenterpriseos.com/",
     heroVideo: "/reels/eeo.mp4",
     heroPoster: "/reels/eeo.jpg",
   },

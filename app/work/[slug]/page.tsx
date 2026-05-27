@@ -5,7 +5,7 @@ import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
 
-const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap"]);
+const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap", "eeo-modules"]);
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));

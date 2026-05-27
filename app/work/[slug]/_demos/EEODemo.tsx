@@ -1,6 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  ReactFlow,
+  Background,
+  BackgroundVariant,
+  Handle,
+  Position,
+  MarkerType,
+  type Edge,
+  type Node,
+  type NodeProps,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
 type ModuleId = "sso" | "org" | "pm" | "ledger" | "wiring";
 
@@ -416,65 +428,160 @@ function LedgerPreview({
   );
 }
 
-function WiringPanel() {
-  const flows: { from: ModuleId; to: ModuleId; label: string; color: string }[] = [
-    { from: "sso", to: "org", label: "user provisioned", color: MODULE_META.sso.hex },
-    { from: "org", to: "pm", label: "rbac · pm.*", color: MODULE_META.org.hex },
-    { from: "org", to: "ledger", label: "rbac · ledger.*", color: MODULE_META.org.hex },
-    { from: "pm", to: "sso", label: "verify jwt (jwks)", color: MODULE_META.sso.hex },
-    { from: "ledger", to: "sso", label: "verify jwt (jwks)", color: MODULE_META.sso.hex },
-    { from: "pm", to: "ledger", label: "ticket → linked doc", color: MODULE_META.pm.hex },
-  ];
+// ─── Wiring · React Flow architecture graph ──────────────────────
 
+function ModuleFlowNode({ data }: NodeProps) {
+  const d = data as { id: Exclude<ModuleId, "wiring"> };
+  const meta = MODULE_META[d.id];
   return (
-    <div>
-      <div className="mb-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85">
-        <span>▸ inter-module traffic</span>
-        <span className="text-bone/55">{flows.length} relations</span>
+    <div
+      className={`relative w-[170px] rounded-md border-2 ${meta.border} ${meta.bg} px-3 py-2.5 backdrop-blur-sm`}
+      style={{ boxShadow: `0 0 20px -8px ${meta.hex}` }}
+    >
+      <Handle type="target" position={Position.Left} style={{ background: meta.hex, width: 6, height: 6, border: "none" }} />
+      <Handle type="source" position={Position.Right} style={{ background: meta.hex, width: 6, height: 6, border: "none" }} />
+      <Handle type="target" position={Position.Top} style={{ background: meta.hex, width: 6, height: 6, border: "none" }} />
+      <Handle type="source" position={Position.Bottom} style={{ background: meta.hex, width: 6, height: 6, border: "none" }} />
+      <div className="font-mono text-[9px] uppercase tracking-[0.3em]" style={{ color: meta.hex }}>
+        ▸ module
       </div>
-      <div className="grid gap-2 md:grid-cols-2">
-        {flows.map((f, i) => {
-          const a = MODULE_META[f.from as Exclude<ModuleId, "wiring">];
-          const b = MODULE_META[f.to as Exclude<ModuleId, "wiring">];
-          return (
-            <div
-              key={i}
-              className="flex items-center gap-3 rounded border border-bone/10 bg-bone/[0.03] px-3 py-2"
-            >
-              <Pill meta={a} />
-              <span className="flex-1 border-t border-dashed" style={{ borderColor: `${f.color}99` }} />
-              <span
-                className="font-mono text-[10px] uppercase tracking-[0.22em]"
-                style={{ color: f.color }}
-              >
-                {f.label}
-              </span>
-              <span className="flex-1 border-t border-dashed" style={{ borderColor: `${f.color}99` }} />
-              <Pill meta={b} />
-            </div>
-          );
-        })}
+      <div
+        className="mt-0.5 font-light text-xl uppercase leading-none tracking-tight text-bone"
+        style={{ fontFamily: "var(--font-space-grotesk)" }}
+      >
+        {meta.label}
       </div>
-      <div className="mt-3 rounded border border-bone/10 bg-bone/[0.03] px-3 py-2 font-mono text-[10.5px] text-bone/85">
-        <span className="text-amber-300">▸</span> one signed JWT · one audit trail ·
-        four independent deploys. Each module owns its own Postgres; cross-module
-        reads happen via tRPC with a 60s rbac cache.
+      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.22em] text-bone/65">
+        {meta.sub}
       </div>
     </div>
   );
 }
 
-function Pill({ meta }: { meta: typeof MODULE_META["sso"] }) {
+function ClientFlowNode() {
   return (
-    <span
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-sm border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.22em] ${meta.border} ${meta.bg} ${meta.text}`}
-    >
-      <span
-        className="inline-block h-1.5 w-1.5 rounded-full"
-        style={{ background: meta.hex, boxShadow: `0 0 4px ${meta.hex}` }}
-      />
-      {meta.label}
-    </span>
+    <div className="w-[140px] rounded-md border-2 border-bone/45 bg-bone/[0.06] px-3 py-2 backdrop-blur-sm">
+      <Handle type="source" position={Position.Right} style={{ background: "#fafaf3", width: 6, height: 6, border: "none" }} />
+      <Handle type="target" position={Position.Right} id="t-right" style={{ background: "#fafaf3", width: 6, height: 6, border: "none" }} />
+      <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-bone/75">▸ client</div>
+      <div
+        className="mt-0.5 font-light text-lg uppercase leading-none tracking-tight text-bone"
+        style={{ fontFamily: "var(--font-space-grotesk)" }}
+      >
+        browser
+      </div>
+      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.22em] text-bone/65">
+        tRPC · JWT
+      </div>
+    </div>
+  );
+}
+
+const flowNodeTypes = {
+  module: ModuleFlowNode,
+  client: ClientFlowNode,
+};
+
+// clean left-to-right pipeline · minimal crossings
+const FLOW_NODES: Node[] = [
+  { id: "browser", type: "client", position: { x: -340, y: 100 }, data: {}, draggable: false },
+  { id: "sso", type: "module", position: { x: -60, y: -40 }, data: { id: "sso" }, draggable: false },
+  { id: "org", type: "module", position: { x: -60, y: 220 }, data: { id: "org" }, draggable: false },
+  { id: "pm", type: "module", position: { x: 240, y: -40 }, data: { id: "pm" }, draggable: false },
+  { id: "ledger", type: "module", position: { x: 240, y: 220 }, data: { id: "ledger" }, draggable: false },
+];
+
+type FlowEdgeDef = { id: string; source: string; target: string; label: string; color: string };
+
+// only 5 essential relations · all left-to-right or top-to-bottom
+const FLOW_EDGES: FlowEdgeDef[] = [
+  { id: "browser-sso", source: "browser", target: "sso", label: "login → jwt", color: "#fbbf24" },
+  { id: "sso-org", source: "sso", target: "org", label: "provision user", color: "#fbbf24" },
+  { id: "org-pm", source: "org", target: "pm", label: "rbac (write?)", color: "#34d399" },
+  { id: "org-ledger", source: "org", target: "ledger", label: "rbac (read?)", color: "#34d399" },
+  { id: "pm-ledger", source: "pm", target: "ledger", label: "attach doc", color: "#a78bfa" },
+];
+
+function WiringPanel() {
+  const edges: Edge[] = FLOW_EDGES.map((e) => ({
+    id: e.id,
+    source: e.source,
+    target: e.target,
+    animated: true,
+    label: e.label,
+    labelStyle: {
+      fill: e.color,
+      fontFamily: "var(--font-geist-mono), monospace",
+      fontSize: 9,
+      fontWeight: 600,
+      letterSpacing: "0.05em",
+    },
+    labelBgStyle: { fill: "#02050f", fillOpacity: 0.95 },
+    labelBgPadding: [4, 2] as [number, number],
+    labelBgBorderRadius: 3,
+    style: { stroke: e.color, strokeWidth: 1.2, strokeOpacity: 0.7 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: e.color,
+      width: 14,
+      height: 14,
+    },
+  }));
+
+  return (
+    <div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a]" />
+          core request pipeline · left to right
+        </span>
+        <span className="text-bone/55">
+          every PM/Ledger call also verifies JWT via SSO jwks
+        </span>
+      </div>
+
+      <div
+        className="rounded-md border border-bone/15 bg-black/40 overflow-hidden"
+        style={{ height: 540 }}
+      >
+        <ReactFlow
+          nodes={FLOW_NODES}
+          edges={edges}
+          nodeTypes={flowNodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          proOptions={{ hideAttribution: true }}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          edgesFocusable={false}
+          elementsSelectable={false}
+          panOnDrag={false}
+          zoomOnScroll={false}
+          zoomOnPinch={false}
+          zoomOnDoubleClick={false}
+          preventScrolling={false}
+        >
+          <Background variant={BackgroundVariant.Dots} color="#475569" gap={18} size={1} />
+        </ReactFlow>
+      </div>
+
+      {/* dark theme overrides for react-flow */}
+      <style jsx global>{`
+        .react-flow__edge-text {
+          fill: currentColor;
+        }
+        .react-flow__edge-textbg {
+          fill: #02050f;
+          fill-opacity: 0.95;
+        }
+        .react-flow__handle {
+          opacity: 0;
+        }
+        .react-flow__attribution {
+          display: none;
+        }
+      `}</style>
+    </div>
   );
 }
 

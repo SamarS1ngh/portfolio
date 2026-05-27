@@ -431,7 +431,7 @@ function DesktopWorld() {
         </aside>
 
         {/* QUEST LOG — stacked per-region, scroll-linked crossfade */}
-        <aside className="absolute left-6 top-[180px] z-30 hidden 2xl:block w-[260px]">
+        <aside className="absolute left-6 top-[180px] z-30 hidden xl:block w-[260px]">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             quests · this region
           </div>
@@ -469,7 +469,7 @@ function DesktopWorld() {
         </aside>
 
         {/* COORDS */}
-        <aside className="absolute left-6 top-16 z-30 hidden 2xl:block">
+        <aside className="absolute left-6 top-16 z-30 hidden xl:block">
           <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             coords · live
           </div>
@@ -482,7 +482,7 @@ function DesktopWorld() {
         </aside>
 
         {/* FAST-TRAVEL */}
-        <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden 2xl:block">
+        <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden xl:block">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             fast-travel
           </div>
@@ -510,7 +510,7 @@ function DesktopWorld() {
         </aside>
 
         {/* READOUT — top-anchored, sits between quest log and fast-travel */}
-        <aside className="absolute left-6 top-[340px] z-30 hidden 2xl:block w-[240px]">
+        <aside className="absolute left-6 top-[340px] z-30 hidden xl:block w-[240px]">
           <div className="mb-2 text-right font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             readout
           </div>
@@ -798,8 +798,11 @@ function smoothstep(edge0: number, edge1: number, x: number) {
 
 // Per-region alpha as a continuous function of global region-float position.
 // Each region peaks at d ∈ [0.18, 0.82], fades in/out over 0.18 of overlap on each side.
-function regionAlpha(i: number, f: number) {
+// First region pins to 1 on the lead-in; last region pins to 1 on the tail.
+function regionAlpha(i: number, f: number, isLast = false) {
   const d = f - i;
+  if (i === 0 && d < 0.18) return 1;
+  if (isLast && d > 0.82) return 1;
   if (d < -0.18 || d > 1.18) return 0;
   if (d < 0.18) return smoothstep(-0.18, 0.18, d);
   if (d > 0.82) return 1 - smoothstep(0.82, 1.18, d);
@@ -820,7 +823,8 @@ function RegionLayer({
   // so it never blocks the 3D canvas underneath. Inner content opts in via its own pointer-events-auto.
   interactive?: boolean;
 }) {
-  const alpha = useTransform(f, (val) => regionAlpha(i, val));
+  const isLast = i === regions.length - 1;
+  const alpha = useTransform(f, (val) => regionAlpha(i, val, isLast));
   return (
     <motion.div
       style={{ opacity: alpha, pointerEvents: "none" }}
@@ -845,10 +849,13 @@ function HeadlineLayer({
   children: React.ReactNode;
   className?: string;
 }) {
+  const isLast = i === regions.length - 1;
   const alpha = useTransform(f, (val) => {
-    if (!infoVisible) return regionAlpha(i, val);
+    if (!infoVisible) return regionAlpha(i, val, isLast);
     const d = val - i;
-    return smoothstep(-0.12, 0.06, d) * (1 - smoothstep(0.18, 0.32, d));
+    // first region · headline already visible at scroll start (no fade-in)
+    const lead = i === 0 ? 1 : smoothstep(-0.12, 0.06, d);
+    return lead * (1 - smoothstep(0.18, 0.32, d));
   });
   return (
     <motion.div style={{ opacity: alpha, pointerEvents: "none" }} className={className}>

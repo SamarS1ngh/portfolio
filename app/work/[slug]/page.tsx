@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProject, projects } from "@/content/projects";
+import { getProject, projects, type Project } from "@/content/projects";
 import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
@@ -83,8 +83,16 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="relative mx-auto max-w-[1720px] px-4 pt-16 pb-20 md:px-8 md:pt-24 md:pb-28">
-          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
-            <span>▸ mission brief · {p.slug}</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
+            <div className="flex flex-wrap items-center gap-2">
+              <span>▸ mission brief · {p.slug}</span>
+              {!SLUGS_WITH_DEMO.has(p.slug) && p.client && (
+                <span className="inline-flex items-center gap-1.5 rounded-sm border-2 border-amber-300/70 bg-amber-300/[0.15] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.35em] text-amber-100 shadow-[0_0_24px_-4px_rgba(255,213,107,0.6)]">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#ffd54a] animate-pulse" />
+                  freelance build · paid client work
+                </span>
+              )}
+            </div>
             <span className="text-amber-300">[ declassified ]</span>
           </div>
 
@@ -122,9 +130,10 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
       </section>
 
-      {/* Wide showcase — interactive simulator takes the slot when it exists; reel only when there's actual footage */}
-      <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
-        {SLUGS_WITH_DEMO.has(p.slug) ? (
+      {/* Wide showcase — interactive simulator when it exists. Skip §00 entirely for
+          client builds without a public-friendly demo (NDA). */}
+      {SLUGS_WITH_DEMO.has(p.slug) && (
+        <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
           <WideSection index="00" label="play · interactive simulator">
             <div className="space-y-4">
               <ProjectDemoSlot slug={p.slug} />
@@ -135,19 +144,15 @@ export default function Page({ params }: { params: { slug: string } }) {
               />
             </div>
           </WideSection>
-        ) : (
-          <WideSection index="00" label="reel · shipped artefact">
-            <HeroReel
-              src={p.heroVideo}
-              poster={p.heroPoster}
-              liveUrl={p.liveUrl}
-              repo={p.repo}
-              playstoreUrl={p.playstoreUrl}
-              projectName={p.name}
-            />
-          </WideSection>
-        )}
-      </section>
+        </section>
+      )}
+
+      {/* Confident client-build dossier · only for projects without a live demo */}
+      {!SLUGS_WITH_DEMO.has(p.slug) && (
+        <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 pt-8 pb-12 md:px-8 md:pt-12 md:pb-20">
+          <ClientDossier project={p} />
+        </section>
+      )}
 
       {/* Wide body — uses the full canvas, mixes column shapes for liveliness */}
       <article className="relative z-10 mx-auto max-w-[1280px] px-4 pb-20 md:px-8">
@@ -160,12 +165,14 @@ export default function Page({ params }: { params: { slug: string } }) {
                 {p.problem}
               </p>
             </div>
-            <div>
-              <SectionHead index="02" eyebrow="motivation" title="why i built it" />
-              <p className="font-sans text-base leading-relaxed text-bone md:text-lg">
-                {p.why}
-              </p>
-            </div>
+            {!p.client && (
+              <div>
+                <SectionHead index="02" eyebrow="motivation" title="why i built it" />
+                <p className="font-sans text-base leading-relaxed text-bone md:text-lg">
+                  {p.why}
+                </p>
+              </div>
+            )}
           </div>
 
           <aside className="space-y-5 lg:mt-1">
@@ -231,8 +238,8 @@ export default function Page({ params }: { params: { slug: string } }) {
           </div>
         </section>
 
-        {/* Challenge + Tradeoffs — paired side-by-side */}
-        <div className="mb-16 grid gap-8 lg:grid-cols-2">
+        {/* Challenge (+ Tradeoffs · personal projects only) */}
+        <div className={`mb-16 grid gap-8 ${p.client ? "" : "lg:grid-cols-2"}`}>
           <section>
             <SectionHead index="05" eyebrow="challenge" title="the hard part" accent="rose" />
             <div className="border-2 border-rose-400/35 bg-[#04060e]/96 p-6 md:p-7">
@@ -245,19 +252,21 @@ export default function Page({ params }: { params: { slug: string } }) {
             </div>
           </section>
 
-          <section>
-            <SectionHead index="06" eyebrow="tradeoffs" title="what i gave up" accent="bone" />
-            <div className="border-2 border-bone/20 bg-[#04060e]/96 p-6 md:p-7">
-              <ul className="space-y-4 font-sans text-base leading-relaxed text-bone md:text-lg">
-                {p.tradeoffs.map((t, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300/70" />
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
+          {!p.client && (
+            <section>
+              <SectionHead index="06" eyebrow="tradeoffs" title="what i gave up" accent="bone" />
+              <div className="border-2 border-bone/20 bg-[#04060e]/96 p-6 md:p-7">
+                <ul className="space-y-4 font-sans text-base leading-relaxed text-bone md:text-lg">
+                  {p.tradeoffs.map((t, i) => (
+                    <li key={i} className="flex gap-3">
+                      <span className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300/70" />
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Decisions — horizontal cards, big numeral on the left, body on the right */}
@@ -699,5 +708,225 @@ function WideSection({
       </div>
       {children}
     </section>
+  );
+}
+
+// ─── ClientDossier · anonymized client-build hero block ───────────────
+
+const ACCENT_TONES: Record<string, { hex: string; border: string; bg: string; text: string }> = {
+  amber: { hex: "#ffd54a", border: "border-amber-300/55", bg: "bg-amber-300/[0.08]", text: "text-amber-200" },
+  emerald: { hex: "#34d399", border: "border-emerald-400/55", bg: "bg-emerald-400/[0.08]", text: "text-emerald-200" },
+  violet: { hex: "#a78bfa", border: "border-violet-400/55", bg: "bg-violet-400/[0.08]", text: "text-violet-200" },
+  sky: { hex: "#38bdf8", border: "border-sky-400/55", bg: "bg-sky-400/[0.08]", text: "text-sky-200" },
+  rose: { hex: "#fb7185", border: "border-rose-400/55", bg: "bg-rose-400/[0.08]", text: "text-rose-200" },
+};
+
+function ClientDossier({ project: p }: { project: Project }) {
+  const metrics = p.heroMetrics ?? [];
+  const ts = p.testimonials ?? [];
+
+  return (
+    <div className="space-y-4">
+      {/* prominent freelance stamp */}
+      <div className="flex flex-wrap items-center gap-3 border-2 border-amber-300/55 bg-gradient-to-r from-amber-300/[0.12] via-amber-300/[0.06] to-transparent px-4 py-3">
+        <span className="inline-flex items-center gap-2 rounded-sm border border-amber-300/65 bg-amber-300/25 px-3 py-1.5 font-mono text-[12px] font-bold uppercase tracking-[0.32em] text-amber-50 shadow-[0_0_20px_-2px_rgba(255,213,107,0.55)]">
+          <span className="inline-block h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_10px_#ffd54a] animate-pulse" />
+          freelance build · paid client work
+        </span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber-100/85">
+          {p.role.replace(/^freelance\s+/, "")}
+        </span>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.3em] text-bone/50">
+          anonymized · client identity protected
+        </span>
+      </div>
+
+      {/* status / context row */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/55 bg-emerald-400/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-100">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
+          live · in production
+        </span>
+        {p.client?.industry && (
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/40 bg-amber-300/[0.06] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.3em] text-amber-200">
+            <span>▸ client</span>
+            <span className="text-bone/40">·</span>
+            <span>{p.client.industry}</span>
+          </span>
+        )}
+        {p.client?.region && (
+          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/75">
+            <span className="text-bone/45">▸</span>
+            {p.client.region}
+          </span>
+        )}
+        {p.client?.engagement && (
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/60">
+            · {p.client.engagement}
+          </span>
+        )}
+      </div>
+
+      {/* hero metrics */}
+      {metrics.length > 0 && (
+        <div className="grid gap-3 sm:grid-cols-3">
+          {metrics.map((m) => {
+            const a = ACCENT_TONES[m.accent ?? "amber"];
+            return (
+              <div
+                key={m.k}
+                className="relative overflow-hidden border-2 bg-[#04060e]/96 px-5 py-5 backdrop-blur-sm"
+                style={{
+                  borderColor: a.hex + "55",
+                  boxShadow: `0 0 32px -12px ${a.hex}80`,
+                }}
+              >
+                <div
+                  className="font-mono text-[10px] uppercase tracking-[0.3em]"
+                  style={{ color: a.hex }}
+                >
+                  {m.k}
+                </div>
+                <div
+                  className="mt-2 font-light text-5xl uppercase leading-none tracking-tight text-bone md:text-6xl"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
+                >
+                  {m.v}
+                </div>
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full"
+                  style={{ background: `radial-gradient(circle, ${a.hex}22, transparent 70%)` }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* testimonial cards · 2 portraits, vertical */}
+      {ts.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/65">
+            <span>▸ testimonials · client side</span>
+            <span className="text-bone/45">
+              illustrated · paraphrased · identifying details removed
+            </span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {ts.map((t, i) => {
+              const a = ACCENT_TONES[t.accent];
+              return (
+                <article
+                  key={i}
+                  className={`flex h-full flex-col items-center border-2 ${a.border} ${a.bg} px-5 py-6 text-center backdrop-blur-sm md:px-6 md:py-7`}
+                >
+                  {/* portrait · small circle, centered */}
+                  <div
+                    className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2"
+                    style={{
+                      borderColor: a.hex,
+                      boxShadow: `0 0 16px -2px ${a.hex}80`,
+                    }}
+                  >
+                    <img
+                      src={`https://randomuser.me/api/portraits/${t.photo.gender}/${t.photo.id}.jpg`}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+
+                  {/* role chip */}
+                  <span
+                    className={`mt-3 inline-flex items-center gap-1.5 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.25em] ${a.border} ${a.bg} ${a.text}`}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 rounded-full"
+                      style={{ background: a.hex, boxShadow: `0 0 6px ${a.hex}` }}
+                    />
+                    {t.role}
+                  </span>
+
+                  {/* quote body */}
+                  <blockquote className="mt-4 font-sans text-[15px] leading-relaxed text-bone">
+                    <span style={{ color: a.hex }} className="text-xl font-bold">
+                      “
+                    </span>
+                    {t.quote}
+                    <span style={{ color: a.hex }} className="text-xl font-bold">
+                      ”
+                    </span>
+                  </blockquote>
+
+                  <div className="mt-auto flex items-center gap-2 pt-4">
+                    <span className="inline-block h-px w-5 bg-bone/40" />
+                    <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-bone/55">
+                      client-side voice
+                    </span>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AvatarBlock({ initials, hex }: { initials: string; hex: string }) {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      width="80"
+      height="80"
+      aria-hidden
+      className="shrink-0"
+    >
+      <defs>
+        <radialGradient id={`avg-${initials}`} cx="35%" cy="35%" r="70%">
+          <stop offset="0%" stopColor={hex} stopOpacity="0.95" />
+          <stop offset="100%" stopColor={hex} stopOpacity="0.55" />
+        </radialGradient>
+      </defs>
+      <rect
+        x="2"
+        y="2"
+        width="76"
+        height="76"
+        rx="12"
+        fill={`url(#avg-${initials})`}
+        stroke={hex}
+        strokeOpacity="0.9"
+        strokeWidth="1.5"
+      />
+      {/* scan-line texture */}
+      <rect
+        x="2"
+        y="2"
+        width="76"
+        height="76"
+        rx="12"
+        fill="url(#avg-lines)"
+        opacity="0.18"
+      />
+      <pattern id="avg-lines" patternUnits="userSpaceOnUse" width="6" height="6">
+        <path d="M 0 6 L 6 0" stroke="#000" strokeWidth="0.5" />
+      </pattern>
+      <text
+        x="40"
+        y="50"
+        textAnchor="middle"
+        fontSize="28"
+        fontFamily="var(--font-space-grotesk), system-ui"
+        fontWeight="300"
+        fill="#04060e"
+        style={{ letterSpacing: "0.04em" }}
+      >
+        {initials}
+      </text>
+    </svg>
   );
 }

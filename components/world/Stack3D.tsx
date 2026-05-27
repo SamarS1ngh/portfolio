@@ -310,9 +310,23 @@ function PlanetScene({
         onPointerUp={() => (drag.current.on = false)}
         onPointerLeave={() => (drag.current.on = false)}
       >
+        {/* base sphere · semi-transparent so the hologram reads */}
         <mesh>
           <sphereGeometry args={[1, 64, 64]} />
-          <meshStandardMaterial color="#4a6cd6" metalness={0.05} roughness={0.85} emissive="#0e1a3a" emissiveIntensity={0.5} />
+          <meshStandardMaterial
+            color="#1b2d6b"
+            metalness={0.1}
+            roughness={0.8}
+            emissive="#10204c"
+            emissiveIntensity={0.55}
+            transparent
+            opacity={0.3}
+          />
+        </mesh>
+        {/* hologram grid · aqua */}
+        <mesh scale={1.003}>
+          <sphereGeometry args={[1, 36, 22]} />
+          <meshBasicMaterial color="#5fc6e0" wireframe transparent opacity={0.15} />
         </mesh>
         {Array.from({ length: 14 }).map((_, i) => {
           const th = (i * 1.234) % (Math.PI * 2);
@@ -341,9 +355,9 @@ function PlanetScene({
 
 function Atmosphere() {
   return (
-    <mesh scale={1.18}>
+    <mesh scale={1.06}>
       <sphereGeometry args={[1, 32, 32]} />
-      <meshBasicMaterial color="#6b8bff" transparent opacity={0.08} side={THREE.BackSide} />
+      <meshBasicMaterial color="#5fc6e0" transparent opacity={0.07} side={THREE.BackSide} />
     </mesh>
   );
 }
@@ -357,7 +371,7 @@ function OrbitRings({ count }: { count: number }) {
         return (
           <mesh key={i} rotation={[Math.PI / 2 + tilt, 0, 0]}>
             <ringGeometry args={[radius - 0.003, radius + 0.003, 96]} />
-            <meshBasicMaterial color="#7da3ff" transparent opacity={0.18} side={THREE.DoubleSide} />
+            <meshBasicMaterial color="#5fc6e0" transparent opacity={0.18} side={THREE.DoubleSide} />
           </mesh>
         );
       })}

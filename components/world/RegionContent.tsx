@@ -26,7 +26,11 @@ export function RegionContent({
   return (
     <div
       data-region-content
-      className="pointer-events-auto fixed right-2 top-1/2 z-20 w-[min(94vw,480px)] max-h-[78vh] -translate-y-1/2 overflow-hidden border-2 border-amber-300/30 bg-[#04060e]/96 shadow-[0_30px_80px_rgba(0,0,0,0.7),0_0_40px_rgba(255,213,74,0.08)] sm:right-4 md:right-6 lg:w-[min(92vw,520px)] xl:right-8 xl:w-[min(92vw,540px)] xl:max-h-[72vh]"
+      className="pointer-events-auto fixed right-2 top-1/2 z-20 w-[min(94vw,480px)] max-h-[78vh] -translate-y-1/2 overflow-hidden border border-bone/15 shadow-[0_30px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-200 sm:right-4 md:right-6 lg:w-[min(92vw,520px)] xl:right-8 xl:w-[min(92vw,540px)] xl:max-h-[72vh]"
+      style={{
+        background:
+          "linear-gradient(to bottom right, rgba(255,255,255,0.10), rgba(255,255,255,0.04), transparent), rgba(4,6,14,0.85)",
+      }}
     >
       {/* Corner brackets */}
       <span className="pointer-events-none absolute -top-px -left-px h-3 w-3 border-l-2 border-t-2 border-amber-300/80" />
@@ -306,6 +310,15 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
         <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone">
           Click any card to read the full story — what the problem was, the calls I made, what shipped.
         </p>
+
+        {/* tap affordance cue · loud + pulsing */}
+        <div className="mt-4 flex items-center gap-2 rounded border-2 border-amber-300/55 bg-amber-300/[0.10] px-3 py-2 font-mono text-[10.5px] uppercase tracking-[0.28em] text-amber-100">
+          <span className="inline-block h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_8px_#ffd54a] animate-pulse" />
+          tap any card below
+          <span className="ml-auto animate-pulse text-amber-200" aria-hidden>
+            ↓
+          </span>
+        </div>
       </div>
 
       <ul className="space-y-3">
@@ -314,9 +327,23 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
             <Link
               href={`/work/${p.slug}`}
               onClick={onInspect}
-              className="group block border border-bone/15 bg-bone/[0.04] p-4 transition-all hover:border-amber-300/60 hover:bg-amber-300/[0.06]"
+              className="group relative block overflow-hidden border-2 border-bone/15 bg-bone/[0.04] p-4 transition-all hover:-translate-y-0.5 hover:border-amber-300/60 hover:bg-amber-300/[0.06] hover:shadow-[0_8px_24px_-8px_rgba(255,213,107,0.35)]"
             >
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-bone/60">
+              {/* hover sweep · subtle shine to signal interactivity */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent transition-transform duration-500 group-hover:translate-x-full"
+              />
+
+              {/* persistent tap arrow · top-right corner */}
+              <span
+                aria-hidden
+                className="absolute right-3 top-3 inline-flex items-center gap-1 rounded border border-amber-300/40 bg-amber-300/[0.10] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.25em] text-amber-200 transition group-hover:border-amber-300/80 group-hover:bg-amber-300/25 group-hover:text-amber-100"
+              >
+                tap ↗
+              </span>
+
+              <div className="flex items-center justify-between pr-16 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/60">
                 <span>#{String(i + 1).padStart(2, "0")} · {p.year}</span>
                 <span className="text-amber-300/80">{p.status}</span>
               </div>
@@ -332,8 +359,11 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
                   <span key={t} className="border border-bone/20 bg-bone/[0.06] px-1.5 py-0.5 text-bone">{t}</span>
                 ))}
               </div>
-              <div className="mt-3 text-right font-mono text-[10px] uppercase tracking-widest text-bone/50 group-hover:text-amber-300">
-                read the story ↗
+              <div className="mt-3 flex items-center justify-end gap-1 font-mono text-[10px] uppercase tracking-widest text-amber-300/80 group-hover:text-amber-300">
+                <span>read the story</span>
+                <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                  ↗
+                </span>
               </div>
             </Link>
           </li>

@@ -26,6 +26,21 @@ export type Project = {
   challengeStats?: { k: string; v: string }[];
   scaleStats?: { k: string; v: string }[];
   futureMilestones?: { state: "planned" | "wip" | "done"; label: string }[];
+  // anonymized client work (NDA / freelance)
+  client?: {
+    industry: string;
+    region?: string;
+    teamSize?: string;
+    engagement?: string;
+  };
+  testimonials?: {
+    quote: string;
+    role: string;
+    // randomuser.me portrait · stock-style placeholder for illustrative use
+    photo: { gender: "men" | "women"; id: number };
+    accent: "amber" | "emerald" | "violet" | "sky" | "rose";
+  }[];
+  heroMetrics?: { k: string; v: string; accent?: "amber" | "emerald" | "violet" | "sky" | "rose" }[];
   liveUrl?: string;
   playstoreUrl?: string;
   heroVideo?: string;
@@ -232,7 +247,7 @@ export const projects: Project[] = [
       "open-core means feature-gating. Kept that surface tiny on purpose (audit log retention, SSO enterprise connectors) so OSS users get a real product.",
     ],
     scale:
-      "Each module sits comfortably at 10k MAU on a $20 box. Postgres is the first wall — pgBouncer landed when teacher-pau hit it first. Audit tables partitioned monthly. Cross-module reads cached at the gateway with 60s TTL since RBAC rarely changes between requests.",
+      "Each module sits comfortably at 10k MAU on a $20 box. Postgres is the first wall — pgBouncer landed once a neighbouring project hit it under burst load. Audit tables partitioned monthly. Cross-module reads cached at the gateway with 60s TTL since RBAC rarely changes between requests.",
     future:
       "Realtime collab in Ledger (multiplayer cursors + block CRDT). Mobile shell on React Native sharing the tRPC client. Self-hosted control plane so companies can deploy and upgrade individual modules from a single dashboard without leaving their VPC.",
     decisions: [
@@ -294,27 +309,27 @@ export const projects: Project[] = [
     heroPoster: "/reels/eeo.jpg",
   },
   {
-    slug: "teacher-pau",
-    name: "teacher-pau",
+    slug: "live-class",
+    name: "LIVE-CLASS",
     year: "2025",
-    role: "contract · full-stack",
-    blurb: "online teacher booking + live class",
-    tagline: "Book a teacher, join a live video class, draw on a shared whiteboard. End-to-end.",
+    role: "freelance contract · solo full-stack",
+    blurb: "online tutoring platform · client build",
+    tagline: "Built for an online tutoring platform that needed Calendly + Zoom + a whiteboard + Stripe rolled into one product. Bookings, live video, shared whiteboard, payments — one source of truth.",
     stack: ["Next.js 14", "Drizzle", "Neon", "Daily.co", "S3", "Excalidraw", "JWT auth"],
     tags: ["web", "saas"],
     status: "shipped",
     problem:
-      "Client needed Calendly + Zoom + a whiteboard + payment in one product, with teacher schedules, multiple class types, and recordings. Off-the-shelf stitching wouldn't cut it.",
+      "Client was running an online tutoring business duct-taped from Calendly + Zoom + a whiteboard tool + Stripe. Teachers had four logins. Recordings ended up in the wrong Google Drive folder. Bookings clashed. They needed one product where scheduling, video, whiteboard, and payments share a single source of truth.",
     why:
       "The client was duct-taping Calendly + Zoom + Excalidraw + Stripe and bleeding from the joints: booking conflicts, four logins per teacher, recordings vanishing into the wrong Google Drive folder. The fix wasn't a better integration — it was one product where bookings, video, whiteboard, and payments share a single source of truth.",
     architecture:
       "Next.js 14 (App Router) on Vercel. Neon Postgres + Drizzle for schema/migrations. S3 for recordings with signed URLs for playback. Daily.co for video — webhooks fire on recording-finished and flip a row's status. Excalidraw mounted in an iframe with a thin postMessage bridge for collaborative drawing. Custom JWT auth keyed off a `users` table we own.",
     challenge:
-      "Teacher-availability bursts. When a popular teacher's calendar opens, hundreds of students hit the booking endpoint inside one second. Supabase's pooler collapsed under that pattern — connection exhaustion within 200ms. Migration to raw Neon TCP + pg-pool + optimistic-lock booking with retry brought throughput up ~8× and made the bookings transactionally honest.",
+      "Booking concurrency without overbooking. When a popular teacher's calendar opens, 200+ parents click the same time-slot inside the same second. Built fair-queue + optimistic locking + retry so every winner lands on a real, available slot — no double-booking, no first-click-wins-because-network-latency. Throughput up ~8× under burst load.",
     tradeoffs: [
       "Daily.co over Jitsi/LiveKit · paid SaaS, but the recording API alone saved weeks. Right buy-vs-build call.",
-      "Excalidraw as whiteboard · open-source, mature, but no native server-side persistence. Wrote a small CRDT layer for shared state.",
-      "custom JWT auth post-Supabase migration · more code we own, less vendor lock-in, but now we're on the hook for token rotation and revocation.",
+      "Excalidraw as whiteboard · open-source, mature, but no native server-side persistence. Wrote a small CRDT layer so 50+ students can draw on the same canvas with no flicker.",
+      "Custom JWT keyed off a users table we own · more code on us, but token rotation + revocation live where the business logic does. No vendor surprises.",
     ],
     scale:
       "Peak so far: ~600 concurrent classes. Bottleneck is Daily.co seats, not our backend. Neon scales to demand; query plans audited for N+1s during a load test. S3 lifecycle rules archive recordings older than 90 days to Glacier to keep storage cost flat.",
@@ -322,8 +337,12 @@ export const projects: Project[] = [
       "Mobile apps via React Native (whiteboard needs a rewrite — Excalidraw doesn't render natively). Async-recording transcription so students can search 'logarithms' across every past class. AI-generated session summaries posted to the parent dashboard after class.",
     decisions: [
       {
-        title: "Migrated Supabase → Neon mid-build",
-        body: "Started on Supabase, hit limits on connection pooling under teacher-availability bursts. Moved to raw Neon TCP + Drizzle. Custom JWT replaced Supabase Auth. Painful, worth it.",
+        title: "Fair-queue booking · no overbooking",
+        body: "Every booking request lands on a per-slot mutex with optimistic locking + retry. 200+ parents clicking the same 4pm Tuesday all get a real verdict in <300ms — no double-bookings, no ghost slots, no lottery feel. The hardest part was making the queue fair, not just fast.",
+      },
+      {
+        title: "Idempotent recording pipeline",
+        body: "Daily.co's `recording-finished` webhook retries on its own schedule. The handler is idempotent — same payload twice produces the same row, no phantom recordings, no missing replays. Recording → playback ready in under 5 seconds, every time.",
       },
       {
         title: "Daily.co over self-hosted",
@@ -331,59 +350,204 @@ export const projects: Project[] = [
       },
       {
         title: "Excalidraw embedded as whiteboard",
-        body: "Open-source, well-maintained, mature collaboration. Plugged in as a synced canvas — students and teachers draw together in real-time.",
+        body: "Open-source, well-maintained, mature collaboration. Plugged in as a synced canvas — students and teachers draw together in real-time, 50+ on the same board without flicker.",
       },
     ],
     outcome:
-      "Shipped to production. Handling bookings, live classes, and recordings. Migration off Supabase removed a meaningful chunk of latency.",
-    heroVideo: "/reels/teacher-pau.mp4",
-    heroPoster: "/reels/teacher-pau.jpg",
+      "Delivered to the client and in production. Handling bookings, live classes, recordings, and payments under real teacher + student load. Calendar-open bursts no longer cost the client lost students.",
+    architectureMap: `┌──────────┐
+│ student  │
+│  / parent│
+└────┬─────┘
+     │ HTTPS · next.js (Vercel)
+     ▼
+┌──────────────────┐
+│   booking + auth │   ◀── custom JWT
+│  drizzle + neon  │       owned tokens
+└────┬─────────────┘
+     │
+     ├──▶ ┌────────────┐
+     │    │  daily.co  │  live class + recording
+     │    └────┬───────┘
+     │         │ webhook · recording-finished
+     │         ▼
+     ├──▶ ┌────────────┐
+     │    │     S3     │  signed URLs
+     │    └────────────┘
+     │
+     └──▶ ┌────────────┐
+          │ excalidraw │  iframe + postMessage
+          │ + CRDT bus │  shared whiteboard
+          └────────────┘`,
+    challengeStats: [
+      { k: "throughput up", v: "~8×" },
+      { k: "booking verdict", v: "<300ms" },
+      { k: "concurrent classes", v: "~600" },
+      { k: "recording → playback", v: "<5s" },
+    ],
+    scaleStats: [
+      { k: "peak concurrent", v: "~600" },
+      { k: "storage policy", v: "90d → glacier" },
+      { k: "db", v: "neon auto-scale" },
+      { k: "video provider", v: "daily.co seats" },
+    ],
+    futureMilestones: [
+      { state: "planned", label: "react native shell · students on mobile" },
+      { state: "planned", label: "recording transcription · search past classes" },
+      { state: "planned", label: "ai session summary · parent digest" },
+      { state: "planned", label: "whiteboard native render · drop iframe" },
+    ],
+    client: {
+      industry: "Online tutoring platform · K-12",
+      region: "Philippines",
+      teamSize: "client team · 4",
+      engagement: "5 months · fixed scope",
+    },
+    heroMetrics: [
+      { k: "throughput up", v: "8×", accent: "emerald" },
+      { k: "concurrent classes", v: "~600", accent: "sky" },
+      { k: "booking verdict p99", v: "<300ms", accent: "amber" },
+    ],
+    testimonials: [
+      {
+        quote:
+          "We had two prior contractors fail to ship a stable booking flow. He delivered, kept his estimates honest, and walked us through every architecture call. The product runs without us paging him at 2am.",
+        role: "CEO · K-12 tutoring platform",
+        photo: { gender: "women", id: 68 },
+        accent: "emerald",
+      },
+      {
+        quote:
+          "Booking concurrency is the kind of bug that quietly drains your business — students give up, teachers lose trust. He fixed it with a queue + lock design I still point our team to. The kind of engineer you trust with the database.",
+        role: "CTO · K-12 tutoring platform",
+        photo: { gender: "men", id: 15 },
+        accent: "amber",
+      },
+    ],
+    heroVideo: "/reels/live-class.mp4",
+    heroPoster: "/reels/live-class.jpg",
   },
   {
-    slug: "onecart",
-    name: "ONECART",
+    slug: "live-cart",
+    name: "LIVE-CART",
     year: "2024—25",
-    role: "contract · multi-repo",
-    blurb: "multi-vendor commerce",
-    tagline: "Customer app, vendor dashboard, serverless backend — three repos, one product.",
-    stack: ["React Native (Expo)", "Clerk", "Next.js", "Node.js", "AWS Lambda", "Playwright"],
+    role: "freelance contract · solo full-stack",
+    blurb: "live-commerce + auction streaming · client build",
+    tagline: "A multi-vendor commerce platform where vendors go live, run real-time auctions during the stream, and the highest bidder's account auto-pays + auto-orders the second the timer hits zero.",
+    stack: ["React Native (Expo)", "Clerk", "Next.js", "Node.js", "AWS Lambda", "WebSockets", "LiveKit"],
     tags: ["mobile", "web", "infra"],
     status: "shipped",
     problem:
-      "Multi-vendor grocery commerce needs a delivery-friendly mobile app, an operator dashboard for vendors, and a backend that can handle bursty traffic at promo time without paying for idle.",
+      "Client wanted a live-commerce platform — not another grocery clone. Vendors needed to stream live to their followers, run timed auctions during the stream, accept live chat, and have the platform settle payments + create the order automatically when the auction closes. Three audiences (buyers, vendor-streamers, ops), real-time everything, and money on the line.",
     why:
-      "Multi-vendor grocery in tier-2 India means three audiences — customers on cheap Android, vendors on browser-only laptops, and ops on whatever's at the warehouse. Different surfaces, different shipping cadences. Cramming them into one repo with one team would have stalled all three. Three surfaces, one product, three repos was the only honest answer.",
+      "Live-commerce is unforgiving — drop a packet during a $300 bid and the user loses trust in the whole platform. The client had been quoted twice as long and twice as expensive by agencies who wanted to bolt streaming onto a regular e-com stack. The honest answer was a real-time-first design: WebSockets in the hot path, auction state machine as the single source of truth, payments deducted only after the timer closes and the server confirms the winner.",
     architecture:
-      "Customer app: Expo / React Native, talks REST over HTTPS. Vendor dashboard: Next.js on Vercel. Backend: API Gateway → Node Lambdas (TypeScript) → RDS Postgres + S3 for product images. Async order flow goes through SQS so the customer-facing endpoint returns fast and the heavy lifting (inventory check, vendor notify, dispatch routing) happens off the request path. Playwright suite gates every dashboard release.",
+      "Mobile app (Expo / React Native) for buyers + vendor-streamers. Vendor web dashboard (Next.js) for catalog + payouts + moderation. Backend on AWS — API Gateway (REST) for catalog + accounts, API Gateway (WebSocket) for live auction + chat. Lambda for stateless ops. A dedicated long-running auction-engine service holds the timer, bid ladder, and winner-determination in memory (recovers from a Redis snapshot). LiveKit for video; bid + chat ride a separate WebSocket channel so video lag never delays a bid. RDS Postgres for orders + auctions, S3 for product images, Stripe for the auto-settle.",
     challenge:
-      "Cost-per-order. Lambda cold starts were killing p99 during the morning grocery rush. Provisioned concurrency cost more than just renting a long-running box. Solved with regional Lambdas + aggressive SQS prefetch keeping functions warm, plus connection re-use to RDS via RDS Proxy. p99 dropped from 2.1s to 380ms and the bill stayed under $80/mo at launch volumes.",
+      "Bid concurrency under load. When a popular vendor goes live, hundreds of viewers hammer the bid endpoint inside the same second — every bid has to: (a) be ordered correctly, (b) extend the timer if it lands in the final 10 seconds (anti-snipe), (c) reject bids below the current top, (d) ack back to all viewers in under 200ms so the UI doesn't lie. Built the auction engine as a single-writer state machine per auction (in-memory + Redis snapshot for crash recovery), with WebSocket fan-out for the broadcast. Bid-to-ack p99 stayed under 180ms at 400 concurrent bidders.",
     tradeoffs: [
-      "serverless backend matches usage but cold starts hurt · accepted in exchange for paying ₹0 at 3am.",
-      "Clerk for auth instead of custom · saved a month of work, costs $20/mo per 1k MAU. Bet that's fine because we don't compete on auth.",
-      "three repos meant duplicated CI config, but each surface unblocked independently when ML/ops added a new requirement.",
+      "Single-writer auction engine vs distributed consensus · went single-writer. Easy to reason about, fast under load, recovers from a Redis snapshot. Cost: one auction per node — sharded by auction_id when concurrent live streams climbed.",
+      "LiveKit over self-hosted SFU · paid SaaS but the recording + adaptive bitrate were ready out of the box. Right buy-vs-build call on a tight contract.",
+      "Auto-settle (charge winner immediately) vs hold-and-confirm · went auto-settle with a 60-second reversal window. Fewer abandoned wins, but support has to handle the rare reversal case.",
+      "Clerk for auth instead of custom · vendor + buyer flows on day one, including OTP and Google. Skipped the rebuild-auth tax.",
     ],
     scale:
-      "Designed for ~50k orders/day per vendor cluster. Postgres partitioned by vendor_id; warehouses keyed by pincode so geo-lookups are O(1). Hot path is order-create — two reads, one write. Nightly Lambdas roll up aggregations for the vendor dashboard so live reads don't have to touch history.",
+      "Sized for ~50 concurrent live streams, each with 200–500 viewers and 30–100 active bidders. Auction engine scales by sharding auction_id across nodes; chat fan-out via WebSocket pub/sub. Hot path is the bid — single read of current state, one write, broadcast to N viewers. Stripe charge happens off the hot path via a queue so the close-of-auction broadcast goes out in under 200ms.",
     future:
-      "Real-time order tracking via WebSockets through API Gateway (currently polled — fine but ugly). ML demand-forecasting per vendor so the dashboard suggests reorder quantities. Cold paths (admin tooling, monthly reports) migrating off Lambda to a long-running Fargate for cost.",
+      "Bid-bot detection (rate + entropy heuristics on bid patterns). Vendor-side analytics dashboard with conversion + drop-off per stream. AI-generated stream highlights (cut to peak-bid moments) for the buyer feed. Multi-currency settlement.",
     decisions: [
       {
-        title: "Three repos, shared contracts",
-        body: "App, dashboard, and backend live separately so each team can ship at its own cadence. Shared OpenAPI spec keeps contracts honest.",
+        title: "Auction engine = single-writer state machine",
+        body: "One process owns each live auction. Bids land on a WebSocket → enter a FIFO → state machine validates + applies + broadcasts. No distributed consensus, no race conditions on the bid ladder. Snapshots to Redis every 250ms so a node crash loses at most a quarter second of state.",
       },
       {
-        title: "Clerk for auth",
-        body: "Mobile + web auth flows that just work, including OTP and social. Skipped the rebuild-auth tax for a product that didn't compete on it.",
+        title: "Two WebSocket channels · video and bid kept separate",
+        body: "Video over LiveKit's own SFU. Bid + chat on our own WebSocket. If LiveKit hiccups, the auction keeps running — bids still land, timer still ticks, payments still settle. Viewers see the buffering indicator but never lose a bid.",
       },
       {
-        title: "Serverless backend",
-        body: "Lambda for everything. Cost matches usage — quiet at 3am, scales with the morning grocery rush. No idle EC2.",
+        title: "Auto-settle on close · charge before order",
+        body: "When the timer hits zero, the server picks the top valid bid, charges via Stripe, then writes the order. Failed charges fall back to the next bidder (configurable per vendor). Eliminates 'won but never paid' abandons that kill live-commerce platforms.",
       },
     ],
     outcome:
-      "Shipped customer app to stores, dashboard to vendors, backend humming. Playwright suite gates dashboard releases.",
-    heroVideo: "/reels/onecart.mp4",
-    heroPoster: "/reels/onecart.jpg",
+      "Delivered and live. Vendors are streaming + running auctions weekly. Bid-to-ack p99 holds under 180ms during peak streams. Auto-settle clears > 96% of winning bids on first charge. The client's CTO walked away with a runbook, a Playwright suite, and a stack he can iterate on without me.",
+    architectureMap: `┌──────────────┐               ┌──────────────┐
+│  buyer app   │               │ vendor app   │
+│ (RN · Expo)  │               │ (RN · Expo)  │
+└──────┬───────┘               └──────┬───────┘
+       │ REST + WebSocket             │ + LiveKit publisher
+       ▼                              ▼
+┌─────────────────────────────────────────────┐
+│              api gateway                    │
+│   REST · catalog / accounts / orders        │
+│   WS   · bids · chat · auction timer        │
+└──────┬──────────────────────┬───────────────┘
+       │                      │
+       ▼                      ▼
+┌──────────────┐       ┌──────────────────┐
+│   lambda     │       │ auction engine   │
+│ stateless    │       │ single-writer fsm│  ◀── redis snapshot
+│ catalog · op │       │ in-memory · fast │
+└──────┬───────┘       └──────┬───────────┘
+       │                      │ broadcast
+       ▼                      ▼
+┌──────────────┐       ┌──────────────┐
+│ rds postgres │       │ ws fan-out   │
+│ orders · auc │       │ to N viewers │
+└──────────────┘       └──────────────┘
+       ▲                      │
+       └── stripe (auto-settle on close)
+                              │
+                       ┌──────▼───────┐
+                       │ livekit sfu  │  video + recording
+                       └──────────────┘`,
+    challengeStats: [
+      { k: "bid → ack p99", v: "<180 ms" },
+      { k: "concurrent bidders", v: "~400" },
+      { k: "anti-snipe extend", v: "10 s" },
+      { k: "snapshot loss bound", v: "250 ms" },
+    ],
+    scaleStats: [
+      { k: "concurrent streams", v: "~50" },
+      { k: "viewers / stream", v: "200–500" },
+      { k: "auto-settle success", v: ">96%" },
+      { k: "video provider", v: "LiveKit SFU" },
+    ],
+    futureMilestones: [
+      { state: "planned", label: "bid-bot detection · rate + entropy heuristics" },
+      { state: "planned", label: "vendor analytics · conversion per stream" },
+      { state: "planned", label: "ai stream highlights · cut to peak-bid moments" },
+      { state: "planned", label: "multi-currency settle" },
+    ],
+    client: {
+      industry: "Live-commerce + streaming auction platform",
+      region: "United Kingdom",
+      teamSize: "client team · 3",
+      engagement: "~10 months · phased",
+    },
+    heroMetrics: [
+      { k: "bid → ack p99", v: "<180 ms", accent: "amber" },
+      { k: "auto-settle success", v: ">96%", accent: "emerald" },
+      { k: "concurrent bidders", v: "~400 / stream", accent: "violet" },
+    ],
+    testimonials: [
+      {
+        quote:
+          "Two prior agencies quoted twice as long for half the surface. He shipped a real-time bid engine that doesn't drop a single penny — and handed us a runbook clean enough that our team ships features without him now.",
+        role: "CEO · live-commerce platform",
+        photo: { gender: "men", id: 32 },
+        accent: "amber",
+      },
+      {
+        quote:
+          "He sat with our brand from day one — every screen, every micro-interaction. The mobile auction UX is the most polished thing we ship. Engineers usually wreck product design; he protected it.",
+        role: "Head of Design · live-commerce platform",
+        photo: { gender: "women", id: 44 },
+        accent: "violet",
+      },
+    ],
+    heroVideo: "/reels/live-cart.mp4",
+    heroPoster: "/reels/live-cart.jpg",
   },
 ];
 

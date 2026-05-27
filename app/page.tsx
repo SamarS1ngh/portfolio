@@ -485,7 +485,7 @@ function DesktopWorld() {
         </aside>
 
         {/* FAST-TRAVEL */}
-        <aside className="pointer-events-auto absolute left-6 bottom-[160px] z-30 hidden xl:block 2xl:bottom-44">
+        <aside className="pointer-events-auto absolute left-6 bottom-20 z-30 hidden xl:block 2xl:bottom-24">
           <div className="mb-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a] animate-pulse" />
             fast-travel · tap to jump
@@ -521,37 +521,6 @@ function DesktopWorld() {
               );
             })}
           </ul>
-        </aside>
-
-        {/* READOUT — top-anchored, sits between quest log and fast-travel · hidden on tighter screens */}
-        <aside className="absolute left-6 top-[340px] z-30 hidden 2xl:block w-[240px]">
-          <div className="mb-2 text-right font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
-            readout
-          </div>
-          <div className="relative w-[240px]">
-            {regions.map((reg, i) => (
-              <RegionLayer
-                key={reg.code + "-ann"}
-                i={i}
-                f={fProgress}
-                className="absolute inset-x-0 top-0"
-              >
-                <div className="rounded border border-bone/15 bg-black/60 p-3 backdrop-blur-md w-[240px]">
-                  <div className="space-y-1.5">
-                    {reg.ann.map((a) => (
-                      <div key={a.label} className="flex justify-between font-mono text-[10px] uppercase tracking-widest">
-                        <span className="text-bone/40">{a.label}</span>
-                        <span className="text-bone">{a.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 border-t border-bone/10 pt-2 font-mono text-[10px] text-emerald-300">
-                    {reg.formula}
-                  </div>
-                </div>
-              </RegionLayer>
-            ))}
-          </div>
         </aside>
 
         {/* === STORY HEADLINE — stacked per-region, scroll-linked === */}
@@ -650,9 +619,6 @@ function DesktopWorld() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* TERMINAL LOG */}
-        <TerminalLog log={log} />
 
         {/* MISSION DETAIL panel (L0 pin) */}
         <AnimatePresence>
@@ -836,11 +802,120 @@ function actLabel(s: number) {
 function HudCorners() {
   return (
     <>
-      <span className="absolute left-2 top-12 z-30 h-4 w-4 border-l border-t border-bone/40" />
-      <span className="absolute right-2 top-12 z-30 h-4 w-4 border-r border-t border-bone/40" />
-      <span className="absolute left-2 bottom-10 z-30 h-4 w-4 border-l border-b border-bone/40" />
-      <span className="absolute right-2 bottom-10 z-30 h-4 w-4 border-r border-b border-bone/40" />
+      {/* Outer thin frame */}
+      <span className="pointer-events-none absolute inset-x-0 top-[44px] z-20 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
+      <span className="pointer-events-none absolute inset-x-0 bottom-[8px] z-20 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
+      <span className="pointer-events-none absolute inset-y-[44px] left-[8px] z-20 w-px bg-gradient-to-b from-transparent via-amber-300/25 to-transparent" />
+      <span className="pointer-events-none absolute inset-y-[44px] right-[8px] z-20 w-px bg-gradient-to-b from-transparent via-amber-300/25 to-transparent" />
+
+      {/* Inner frame · ~24px inset */}
+      <span className="pointer-events-none absolute left-6 right-6 top-[56px] z-20 h-px bg-amber-300/10" />
+      <span className="pointer-events-none absolute left-6 right-6 bottom-5 z-20 h-px bg-amber-300/10" />
+
+      {/* Corner brackets · double-stroke L-shapes */}
+      <CornerBracket pos="tl" />
+      <CornerBracket pos="tr" />
+      <CornerBracket pos="bl" />
+      <CornerBracket pos="br" />
+
+      {/* Edge ticks · ruler-style notches */}
+      <EdgeTicks side="top" />
+      <EdgeTicks side="bottom" />
+      <EdgeTicks side="left" />
+      <EdgeTicks side="right" />
+
+      {/* Top-left ornament · JARVIS-style identifier block */}
+      <div className="pointer-events-none absolute left-3 top-[50px] z-20 flex flex-col gap-px font-mono text-[8px] uppercase tracking-[0.35em] text-amber-300/55">
+        <span>sys · z-nav</span>
+        <span className="text-amber-300/30">∎ ∎ ∎ ∎ ∎</span>
+      </div>
+
+      {/* Top-right ornament · system stat hex */}
+      <svg viewBox="0 0 40 36" className="pointer-events-none absolute right-3 top-[50px] z-20 h-7 w-8 opacity-70">
+        <polygon points="20,2 36,11 36,25 20,34 4,25 4,11" fill="none" stroke="#ffd54a" strokeWidth="0.8" strokeOpacity="0.55" />
+        <polygon points="20,8 30,14 30,22 20,28 10,22 10,14" fill="none" stroke="#ffd54a" strokeWidth="0.6" strokeOpacity="0.35" />
+        <circle cx="20" cy="18" r="1.6" fill="#ffd54a" fillOpacity="0.7">
+          <animate attributeName="fillOpacity" values="0.3;0.85;0.3" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+      </svg>
+
+      {/* Bottom-left ornament · status block */}
+      <div className="pointer-events-none absolute left-3 bottom-3 z-20 flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.35em] text-amber-300/55">
+        <span className="inline-block h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_4px_#ffd54a]" />
+        <span>frame · stable</span>
+      </div>
+
+      {/* Bottom-right ornament · scan readout */}
+      <div className="pointer-events-none absolute right-3 bottom-3 z-20 flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.35em] text-amber-300/55">
+        <span>scan · 0x7af3</span>
+        <span className="inline-block h-1 w-3 bg-amber-300/40" />
+      </div>
+
+      {/* Mid-left rail · vertical scan line */}
+      <span className="pointer-events-none absolute left-[8px] top-1/2 z-20 -translate-y-1/2 flex flex-col items-center gap-1.5">
+        <span className="block h-6 w-px bg-amber-300/40" />
+        <span className="block h-1.5 w-1.5 rotate-45 border border-amber-300/60 bg-black/40" />
+        <span className="block h-6 w-px bg-amber-300/40" />
+      </span>
+
+      {/* Mid-right rail · vertical scan line */}
+      <span className="pointer-events-none absolute right-[8px] top-1/2 z-20 -translate-y-1/2 flex flex-col items-center gap-1.5">
+        <span className="block h-6 w-px bg-amber-300/40" />
+        <span className="block h-1.5 w-1.5 rotate-45 border border-amber-300/60 bg-black/40" />
+        <span className="block h-6 w-px bg-amber-300/40" />
+      </span>
+
+      {/* Sweep · slow vertical scan band */}
+      <span
+        className="pointer-events-none absolute left-0 right-0 z-[18] h-12 opacity-[0.08]"
+        style={{
+          background: "linear-gradient(180deg, transparent, rgba(255,213,74,0.4), transparent)",
+          animation: "hudSweep 9s linear infinite",
+        }}
+      />
+      <style jsx global>{`
+        @keyframes hudSweep {
+          0%   { top: -10%; }
+          100% { top: 110%; }
+        }
+      `}</style>
     </>
+  );
+}
+
+function CornerBracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
+  const v = pos[0] === "t" ? "top-[48px]" : "bottom-[12px]";
+  const h = pos[1] === "l" ? "left-[12px]" : "right-[12px]";
+  const bv = pos[0] === "t" ? "border-t" : "border-b";
+  const bh = pos[1] === "l" ? "border-l" : "border-r";
+  const ov = pos[0] === "t" ? "top-[44px]" : "bottom-[8px]";
+  const oh = pos[1] === "l" ? "left-[8px]" : "right-[8px]";
+  return (
+    <>
+      {/* outer L */}
+      <span className={`pointer-events-none absolute z-20 h-5 w-5 ${ov} ${oh} ${bv} ${bh} border-amber-300/70`} />
+      {/* inner L · offset for double-stroke look */}
+      <span className={`pointer-events-none absolute z-20 h-2.5 w-2.5 ${v} ${h} ${bv} ${bh} border-amber-300/40`} />
+    </>
+  );
+}
+
+function EdgeTicks({ side }: { side: "top" | "bottom" | "left" | "right" }) {
+  const ticks = Array.from({ length: 12 }, (_, i) => i);
+  const isV = side === "left" || side === "right";
+  const baseClass = isV
+    ? `pointer-events-none absolute z-20 ${side === "left" ? "left-[8px]" : "right-[8px]"} top-[60px] bottom-5 flex flex-col justify-between`
+    : `pointer-events-none absolute z-20 ${side === "top" ? "top-[44px]" : "bottom-[8px]"} left-12 right-12 flex justify-between`;
+  return (
+    <div className={baseClass}>
+      {ticks.map((t) => (
+        <span
+          key={t}
+          className={isV ? "h-px w-1.5 bg-amber-300/30" : "h-1.5 w-px bg-amber-300/30"}
+          style={{ opacity: t % 3 === 0 ? 0.6 : 0.25 }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -867,41 +942,6 @@ function camValue(idx: number, scrub: number, axis: "x" | "y" | "z") {
   if (axis === "z") return 6 - scrub * 0.8;
   if (axis === "x") return CAM_X[idx] * (1 - scrub) + CAM_X[next] * scrub;
   return CAM_Y[idx] * (1 - scrub) + CAM_Y[next] * scrub;
-}
-
-function TerminalLog({ log }: { log: LogEntry[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
-  }, [log]);
-  const colorOf: Record<LogEntry["kind"], string> = {
-    info: "text-bone/70", ok: "text-emerald-300", warn: "text-amber-300", cmd: "text-sky-300",
-  };
-  return (
-    <div className="absolute left-0 right-0 bottom-0 z-30 hidden border-t border-bone/10 bg-black/60 backdrop-blur-md md:block">
-      <div className="flex items-center justify-between border-b border-bone/10 px-6 py-1 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50 md:px-12 2xl:py-1.5">
-        <span className="flex items-center gap-2">
-          <span className="text-emerald-300">$</span>
-          <span>tail · ~/.world.log · live</span>
-        </span>
-        <span className="hidden md:inline">scroll · travel · ← → jump · I toggle info</span>
-      </div>
-      <div ref={ref} className="h-[60px] overflow-y-auto px-6 py-1.5 font-mono text-[9.5px] leading-snug md:px-12 2xl:h-[100px] 2xl:py-2 2xl:text-[10px] 2xl:leading-relaxed">
-        {log.map((entry) => (
-          <div key={entry.id} className="flex gap-3">
-            <span className="shrink-0 text-bone/30">[{entry.t}]</span>
-            <span className="text-bone/40">›</span>
-            <span className={colorOf[entry.kind]}>{entry.text}</span>
-          </div>
-        ))}
-        <div className="flex gap-2 text-amber-300">
-          <span>$</span>
-          <span className="inline-block h-3 w-2 bg-amber-300" style={{ animation: "blink 1.2s steps(2) infinite" }} />
-        </div>
-      </div>
-      <style jsx global>{`@keyframes blink { 50% { opacity: 0; } }`}</style>
-    </div>
-  );
 }
 
 function nowT() {

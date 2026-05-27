@@ -570,12 +570,21 @@ function DesktopWorld() {
               {reg.biome}
             </div>
             <h2
-              className="mt-5 font-light text-4xl uppercase tracking-tight text-bone lg:text-5xl xl:text-7xl"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
+              className="mt-5 font-light uppercase tracking-tight text-bone"
+              style={{
+                fontFamily: "var(--font-space-grotesk)",
+                fontSize: "clamp(2rem, 5.2vw, 5rem)",
+                lineHeight: 1.02,
+              }}
             >
               {reg.region}
             </h2>
-            <p className="mt-3 font-sans text-base leading-relaxed text-bone md:text-lg">
+            <p
+              className="mt-3 font-sans leading-relaxed text-bone"
+              style={{
+                fontSize: "clamp(0.95rem, 1.05vw, 1.2rem)",
+              }}
+            >
               {reg.serif}
             </p>
             <p className="mt-5 font-mono text-[10px] uppercase tracking-widest text-amber-300/80 animate-pulse">

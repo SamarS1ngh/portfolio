@@ -101,8 +101,8 @@ export default function Page({ params }: { params: { slug: string } }) {
           </div>
 
           <h1
-            className="mt-3 font-light text-5xl uppercase leading-[0.9] tracking-tight text-bone md:text-7xl lg:text-[120px]"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
+            className="mt-3 font-light uppercase leading-[0.9] tracking-tight text-bone"
+            style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(2.5rem, 9vw, 8.5rem)" }}
           >
             {p.name}
           </h1>
@@ -530,8 +530,8 @@ function SectionHead({
         <span className={`h-px flex-1 bg-gradient-to-r from-transparent ${a.line} to-transparent`} />
       </div>
       <h2
-        className="mt-4 font-light text-4xl uppercase leading-[0.95] tracking-tight text-bone md:text-5xl lg:text-6xl"
-        style={{ fontFamily: "var(--font-space-grotesk)" }}
+        className="mt-4 font-light uppercase leading-[0.95] tracking-tight text-bone"
+        style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(1.8rem, 4vw, 3.75rem)" }}
       >
         {title}
       </h2>

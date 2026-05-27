@@ -434,7 +434,7 @@ function DesktopWorld() {
         </aside>
 
         {/* QUEST LOG — stacked per-region, scroll-linked crossfade */}
-        <aside className="absolute left-6 top-[120px] z-30 hidden xl:block w-[240px] 2xl:top-[180px] 2xl:w-[260px]">
+        <aside className="absolute left-6 top-[170px] z-30 hidden xl:block w-[240px] 2xl:top-[180px] 2xl:w-[260px]">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             quests · this region
           </div>
@@ -524,7 +524,7 @@ function DesktopWorld() {
         </aside>
 
         {/* READOUT — top-anchored, sits between quest log and fast-travel · hidden on tighter screens */}
-        <aside className="absolute left-6 top-[280px] z-30 hidden 2xl:block w-[240px]">
+        <aside className="absolute left-6 top-[340px] z-30 hidden 2xl:block w-[240px]">
           <div className="mb-2 text-right font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             readout
           </div>
@@ -942,14 +942,14 @@ function TerminalLog({ log }: { log: LogEntry[] }) {
   };
   return (
     <div className="absolute left-0 right-0 bottom-0 z-30 hidden border-t border-bone/10 bg-black/60 backdrop-blur-md md:block">
-      <div className="flex items-center justify-between border-b border-bone/10 px-6 py-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50 md:px-12">
+      <div className="flex items-center justify-between border-b border-bone/10 px-6 py-1 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50 md:px-12 2xl:py-1.5">
         <span className="flex items-center gap-2">
           <span className="text-emerald-300">$</span>
           <span>tail · ~/.world.log · live</span>
         </span>
         <span className="hidden md:inline">scroll · travel · ← → jump · I toggle info</span>
       </div>
-      <div ref={ref} className="h-[100px] overflow-y-auto px-6 py-2 font-mono text-[10px] leading-relaxed md:px-12">
+      <div ref={ref} className="h-[60px] overflow-y-auto px-6 py-1.5 font-mono text-[9.5px] leading-snug md:px-12 2xl:h-[100px] 2xl:py-2 2xl:text-[10px] 2xl:leading-relaxed">
         {log.map((entry) => (
           <div key={entry.id} className="flex gap-3">
             <span className="shrink-0 text-bone/30">[{entry.t}]</span>

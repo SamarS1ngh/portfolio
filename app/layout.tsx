@@ -20,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://samar.dev"),
+  metadataBase: new URL("https://samarsingh.is-a.dev"),
   title: {
     default: "samar singh — engineer of strange quiet machines",
     template: "%s",
@@ -30,17 +30,26 @@ export const metadata: Metadata = {
   keywords: ["samar singh", "software engineer", "voice ai", "indie hacker", "hyderabad", "portfolio"],
   authors: [{ name: "Samar Singh" }],
   openGraph: {
-    title: "samar singh",
-    description: "engineer of strange quiet machines",
+    title: "samar singh — engineer of strange quiet machines",
+    description: "software engineer making voice agents, notification ML, indie tools, and quiet machines.",
     type: "website",
-    url: "https://samar.dev",
-    siteName: "samar.dev",
+    url: "https://samarsingh.is-a.dev",
+    siteName: "samarsingh.is-a.dev",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "samar singh — engineer of strange quiet machines",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "samar singh",
-    description: "engineer of strange quiet machines",
+    title: "samar singh — engineer of strange quiet machines",
+    description: "software engineer making voice agents, notification ML, indie tools, and quiet machines.",
     creator: "@samarnarangi",
+    images: ["/og.png"],
   },
   robots: {
     index: true,

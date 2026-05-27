@@ -310,7 +310,7 @@ export default function EEODemo() {
                 key={`${tab}-${reloadKey[tab] ?? 0}`}
                 src={MODULE_URLS[tab] ?? ""}
                 title={`${MODULE_META[tab].label} module`}
-                className="block h-[520px] w-full rounded border border-bone/15 bg-white"
+                className="block h-[820px] max-h-[85vh] w-full rounded border border-bone/15 bg-white"
                 loading="lazy"
                 sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                 referrerPolicy="no-referrer"
@@ -347,7 +347,7 @@ function LedgerPreview({
   ];
 
   return (
-    <div className="flex h-[520px] w-full flex-col overflow-hidden rounded-md border border-sky-400/25 bg-sky-400/[0.04]">
+    <div className="flex h-[820px] max-h-[85vh] w-full flex-col overflow-hidden rounded-md border border-sky-400/25 bg-sky-400/[0.04]">
       {/* header */}
       <div className="border-b border-sky-400/20 px-6 py-5">
         <div className="flex flex-wrap items-center gap-2.5">

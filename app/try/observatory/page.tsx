@@ -67,7 +67,7 @@ export default function ObservatoryPrototype() {
             ▸ operator profile
           </div>
           <h1 className="mt-3 font-display text-3xl font-light uppercase tracking-tight text-bone md:text-5xl lg:text-6xl">
-            SAMAR NARANGI
+            SAMAR SINGH
           </h1>
           <p className="mt-2 font-serif text-lg italic text-bone/80 md:text-xl">
             engineer of strange quiet machines.

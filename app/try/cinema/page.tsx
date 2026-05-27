@@ -63,7 +63,7 @@ export default function CinemaPrototype() {
       <div className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[44px] bg-black" />
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 h-[44px] bg-black" />
       <div className="pointer-events-none fixed left-6 top-3 z-50 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/50 md:left-12">
-        S.NARANGI · 2026
+        S.SINGH · 2026
       </div>
       <div className="pointer-events-none fixed right-6 top-3 z-50 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/50 md:right-12">
         TC · {tc}

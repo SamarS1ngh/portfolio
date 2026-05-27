@@ -10,7 +10,7 @@ const layers = [
     z: 0,
     code: "L.00",
     title: "IDENTITY",
-    head: "samar narangi",
+    head: "samar singh",
     sub: "engineer of strange quiet machines.",
     side: "node HYD-001 · 2026",
   },

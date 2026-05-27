@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "writing · samar narangi",
+  title: "writing · samar singh",
   description: "notes, essays, half-thoughts. archive of the things i couldn't keep in my head.",
 };
 

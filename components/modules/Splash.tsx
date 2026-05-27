@@ -47,7 +47,7 @@ export function Splash() {
               className="mt-6 font-display text-[58px] font-light uppercase leading-[0.92] tracking-tight text-bone heavy-shadow md:text-[110px] lg:text-[140px]"
             >
               SAMAR<br />
-              NARANGI
+              SINGH
             </motion.h1>
 
             <motion.p

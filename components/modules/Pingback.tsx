@@ -206,7 +206,7 @@ export function Pingback() {
 
         {/* Footer */}
         <footer className="mt-20 flex flex-col items-start justify-between gap-3 border-t border-white/15 pt-6 font-mono text-[10px] uppercase tracking-widest text-bone/60 md:flex-row">
-          <span>© 2026 samar narangi · hyderabad / internet</span>
+          <span>© 2026 samar singh · hyderabad / internet</span>
           <span>made with next · framer-motion · a lot of coffee</span>
           <span className="text-hot">end of feed_</span>
         </footer>

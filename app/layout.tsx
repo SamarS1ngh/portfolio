@@ -22,15 +22,15 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL("https://samar.dev"),
   title: {
-    default: "samar narangi — engineer of strange quiet machines",
+    default: "samar singh — engineer of strange quiet machines",
     template: "%s",
   },
   description:
     "software engineer making voice agents, notification ML, indie tools, and quiet machines. hyderabad / internet.",
-  keywords: ["samar narangi", "software engineer", "voice ai", "indie hacker", "hyderabad", "portfolio"],
-  authors: [{ name: "Samar Narangi" }],
+  keywords: ["samar singh", "software engineer", "voice ai", "indie hacker", "hyderabad", "portfolio"],
+  authors: [{ name: "Samar Singh" }],
   openGraph: {
-    title: "samar narangi",
+    title: "samar singh",
     description: "engineer of strange quiet machines",
     type: "website",
     url: "https://samar.dev",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "samar narangi",
+    title: "samar singh",
     description: "engineer of strange quiet machines",
     creator: "@samarnarangi",
   },

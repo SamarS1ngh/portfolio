@@ -15,7 +15,7 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   const p = getProject(params.slug);
   if (!p) return { title: "not found · samar.dev" };
   return {
-    title: `${p.name} · mission brief · samar narangi`,
+    title: `${p.name} · mission brief · samar singh`,
     description: p.tagline,
   };
 }

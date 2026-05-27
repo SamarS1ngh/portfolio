@@ -26,7 +26,7 @@ export type Region = {
 export const regions: Region[] = [
   {
     code: "R0", region: "ORIGIN STATION", codename: "EKKO-7", classification: "INHABITED · TEMPERATE", title: "identity", jp: "起源",
-    headline: "samar narangi",
+    headline: "samar singh",
     serif: "engineer of strange quiet machines.",
     biome: "the hub · where you spawn",
     tint: "rgba(20,40,90,0.45)",

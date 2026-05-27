@@ -30,11 +30,21 @@ body {
   color: #fff;
 }
 
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--hot), var(--violet));
+  background: rgba(255, 213, 74, 0.28);
   border-radius: 999px;
+  border: 1px solid rgba(255, 213, 74, 0.18);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 213, 74, 0.45);
+}
+::-webkit-scrollbar-corner { background: transparent; }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 213, 74, 0.28) rgba(255, 255, 255, 0.02);
 }
 
 /* Gradient meshes (per zone) */

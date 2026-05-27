@@ -233,8 +233,11 @@ function DesktopWorld() {
   // Story beats within a region: 0..1 scrub → reveal phase
   // Sequential: headline first (0..0.20), then content (0.22..0.92). No overlap → no bleed-through.
   const showHeadline = scrub < 0.22 || !showContent;
+  // last region · content holds at full through scroll end (no tail fade)
+  const isLastChamber = chamberIdx === regions.length - 1;
   const contentOpacity = showContent
-    ? smoothstep(0.22, 0.34, scrub) * (1 - smoothstep(0.92, 1.0, scrub))
+    ? smoothstep(0.22, 0.34, scrub) *
+      (isLastChamber ? 1 : 1 - smoothstep(0.92, 1.0, scrub))
     : 0;
   const outroHint = scrub > 0.88 && chamberIdx < regions.length - 1;
   const introHint = scrub < 0.05 && chamberIdx > 0;
@@ -483,10 +486,11 @@ function DesktopWorld() {
 
         {/* FAST-TRAVEL */}
         <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden xl:block">
-          <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
-            fast-travel
+          <div className="mb-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a] animate-pulse" />
+            fast-travel · tap to jump
           </div>
-          <ul className="space-y-0.5 rounded border border-bone/15 bg-black/60 p-2 backdrop-blur-md">
+          <ul className="space-y-0.5 rounded border-2 border-amber-300/40 bg-black/60 p-2 backdrop-blur-md shadow-[0_0_20px_-6px_rgba(255,213,107,0.4)]">
             {regions.map((reg, i) => {
               const isCur = chamberIdx === i;
               const isVis = visited.has(i);
@@ -494,14 +498,24 @@ function DesktopWorld() {
                 <li key={reg.code}>
                   <button
                     onClick={() => jumpTo(i)}
-                    className={`flex w-full items-center gap-2 px-1.5 py-1 font-mono text-[10px] uppercase tracking-widest transition-colors ${
-                      isCur ? "text-amber-300" : isVis ? "text-emerald-300" : "text-bone/40 hover:text-bone/80"
+                    className={`group flex w-full items-center gap-2 rounded-sm border border-transparent px-1.5 py-1 font-mono text-[10px] uppercase tracking-widest transition-all hover:translate-x-0.5 hover:border-amber-300/50 hover:bg-amber-300/[0.08] ${
+                      isCur
+                        ? "border-amber-300/55 bg-amber-300/[0.10] text-amber-200"
+                        : isVis
+                        ? "text-emerald-300 hover:text-amber-200"
+                        : "text-bone/75 hover:text-amber-200"
                     }`}
                   >
                     <span className="w-3 text-center">{reg.glyph}</span>
                     <span className="w-6">{reg.code}</span>
                     <span className="flex-1 text-left">{reg.region}</span>
-                    {isCur && <span className="text-amber-300">●</span>}
+                    {isCur ? (
+                      <span className="text-amber-300">●</span>
+                    ) : (
+                      <span className="text-bone/30 transition group-hover:text-amber-300">
+                        ↗
+                      </span>
+                    )}
                   </button>
                 </li>
               );
@@ -561,7 +575,7 @@ function DesktopWorld() {
             >
               {reg.region}
             </h2>
-            <p className="mt-3 font-serif text-base italic text-bone/80 md:text-xl">
+            <p className="mt-3 font-sans text-base leading-relaxed text-bone md:text-lg">
               {reg.serif}
             </p>
             <p className="mt-5 font-mono text-[10px] uppercase tracking-widest text-amber-300/80 animate-pulse">
@@ -715,7 +729,7 @@ function DesktopWorld() {
               <h3 className="mt-2 font-light text-3xl uppercase tracking-wider text-bone" style={{ fontFamily: "var(--font-space-grotesk)" }}>
                 {selectedPin.name}
               </h3>
-              <p className="mt-3 font-serif text-base italic text-bone/85">{selectedPin.tagline}</p>
+              <p className="mt-3 font-sans text-[15px] leading-relaxed text-bone/95">{selectedPin.tagline}</p>
               <div className="mt-4 flex flex-wrap gap-1.5 font-mono text-[10px] uppercase tracking-widest">
                 {selectedPin.tags.map((t) => (
                   <span key={t} className="border border-amber-300/30 bg-amber-300/10 px-2 py-0.5 text-amber-200">{t}</span>
@@ -855,7 +869,9 @@ function HeadlineLayer({
     const d = val - i;
     // first region · headline already visible at scroll start (no fade-in)
     const lead = i === 0 ? 1 : smoothstep(-0.12, 0.06, d);
-    return lead * (1 - smoothstep(0.18, 0.32, d));
+    // last region · headline holds visible deep into the region (no early tail fade)
+    const tail = isLast ? 1 : 1 - smoothstep(0.18, 0.32, d);
+    return lead * tail;
   });
   return (
     <motion.div style={{ opacity: alpha, pointerEvents: "none" }} className={className}>

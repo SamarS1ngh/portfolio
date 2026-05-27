@@ -520,20 +520,20 @@ function SchematicScene({ progressRef }: { progressRef: React.MutableRefObject<n
     <group ref={g}>
       <mesh>
         <boxGeometry args={[2.2, 2.2, 2.2]} />
-        <meshBasicMaterial wireframe color="#7da3ff" transparent opacity={0.45} />
+        <meshBasicMaterial wireframe color="#7da3ff" transparent opacity={0.18} />
       </mesh>
       <mesh ref={inner}>
         <boxGeometry args={[1.5, 1.5, 1.5]} />
-        <meshBasicMaterial wireframe color="#fcd34d" transparent opacity={0.55} />
+        <meshBasicMaterial wireframe color="#fcd34d" transparent opacity={0.22} />
       </mesh>
       <mesh ref={inner2}>
         <boxGeometry args={[0.8, 0.8, 0.8]} />
-        <meshBasicMaterial wireframe color="#ff6b6b" transparent opacity={0.75} />
+        <meshBasicMaterial wireframe color="#ff6b6b" transparent opacity={0.3} />
       </mesh>
       {[[-1.1,-1.1,-1.1],[1.1,-1.1,-1.1],[-1.1,1.1,-1.1],[1.1,1.1,-1.1],[-1.1,-1.1,1.1],[1.1,-1.1,1.1],[-1.1,1.1,1.1],[1.1,1.1,1.1]].map((p, i) => (
         <mesh key={i} position={p as any} scale={0.06}>
           <sphereGeometry args={[1, 8, 8]} />
-          <meshBasicMaterial color="#ffd54a" />
+          <meshBasicMaterial color="#ffd54a" transparent opacity={0.5} />
         </mesh>
       ))}
     </group>
@@ -705,27 +705,33 @@ function BeaconScene({ progressRef }: { progressRef: React.MutableRefObject<numb
     if (ringRef.current) {
       ringRef.current.scale.setScalar(1.5 + ((t * 0.7) % 2));
       const mat = ringRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = (1 - ((t * 0.7) % 2) / 2) * charge;
+      mat.opacity = (1 - ((t * 0.7) % 2) / 2) * charge * 0.18;
     }
     if (ring2Ref.current) {
       ring2Ref.current.scale.setScalar(2.0 + ((t * 0.5 + 0.6) % 2));
       const mat = ring2Ref.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = (1 - ((t * 0.5 + 0.6) % 2) / 2) * charge * 0.6;
+      mat.opacity = (1 - ((t * 0.5 + 0.6) % 2) / 2) * charge * 0.12;
     }
   });
   return (
     <group>
       <mesh ref={ref}>
         <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color="#ff6b9d" emissive="#ff006e" emissiveIntensity={1.6} />
+        <meshStandardMaterial
+          color="#ff6b9d"
+          emissive="#ff006e"
+          emissiveIntensity={0.45}
+          transparent
+          opacity={0.35}
+        />
       </mesh>
       <mesh ref={ringRef}>
         <ringGeometry args={[0.6, 0.62, 96]} />
-        <meshBasicMaterial color="#ff6b9d" transparent opacity={0.8} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#ff6b9d" transparent opacity={0.18} side={THREE.DoubleSide} />
       </mesh>
       <mesh ref={ring2Ref}>
         <ringGeometry args={[0.6, 0.62, 96]} />
-        <meshBasicMaterial color="#ffd54a" transparent opacity={0.6} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#ffd54a" transparent opacity={0.12} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );

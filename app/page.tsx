@@ -485,12 +485,12 @@ function DesktopWorld() {
         </aside>
 
         {/* FAST-TRAVEL */}
-        <aside className="pointer-events-auto absolute left-6 bottom-28 z-30 hidden xl:block 2xl:bottom-44">
+        <aside className="pointer-events-auto absolute left-6 bottom-[160px] z-30 hidden xl:block 2xl:bottom-44">
           <div className="mb-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a] animate-pulse" />
             fast-travel · tap to jump
           </div>
-          <ul className="space-y-0.5 rounded border-2 border-amber-300/40 bg-black/60 p-2 backdrop-blur-md shadow-[0_0_20px_-6px_rgba(255,213,107,0.4)]">
+          <ul className="space-y-0 rounded border-2 border-amber-300/40 bg-black/60 p-1.5 backdrop-blur-md shadow-[0_0_20px_-6px_rgba(255,213,107,0.4)] 2xl:space-y-0.5 2xl:p-2">
             {regions.map((reg, i) => {
               const isCur = chamberIdx === i;
               const isVis = visited.has(i);
@@ -498,7 +498,7 @@ function DesktopWorld() {
                 <li key={reg.code}>
                   <button
                     onClick={() => jumpTo(i)}
-                    className={`group flex w-full items-center gap-2 rounded-sm border border-transparent px-1.5 py-1 font-mono text-[10px] uppercase tracking-widest transition-all hover:translate-x-0.5 hover:border-amber-300/50 hover:bg-amber-300/[0.08] ${
+                    className={`group flex w-full items-center gap-1.5 rounded-sm border border-transparent px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest transition-all hover:translate-x-0.5 hover:border-amber-300/50 hover:bg-amber-300/[0.08] 2xl:gap-2 2xl:py-1 2xl:text-[10px] ${
                       isCur
                         ? "border-amber-300/55 bg-amber-300/[0.10] text-amber-200"
                         : isVis

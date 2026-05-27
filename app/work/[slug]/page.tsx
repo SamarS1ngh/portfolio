@@ -60,14 +60,14 @@ export default function Page({ params }: { params: { slug: string } }) {
 
       {/* Top HUD */}
       <header className="relative z-20 border-b border-bone/15 bg-black/50 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85 md:px-8">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/85 md:px-8">
           <Link href="/" className="flex items-center gap-2 hover:text-amber-300">
             <span>←</span>
             <span className="text-bone">samar.dev</span>
-            <span className="text-bone/40">/</span>
-            <span>fabrication yards</span>
+            <span className="hidden text-bone/40 sm:inline">/</span>
+            <span className="hidden sm:inline">fabrication yards</span>
           </Link>
-          <span>brief · {String(idx + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
+          <span className="hidden sm:inline">brief · {String(idx + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
           <span className="flex items-center gap-2">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
             {p.status}

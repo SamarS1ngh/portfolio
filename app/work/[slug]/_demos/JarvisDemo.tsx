@@ -1087,7 +1087,7 @@ export default function JarvisDemo() {
         ⚠ browser preview · only browser APIs run. desktop daemon (xdotool, processes, files) lives at the project root.
       </div>
 
-      <div className="relative mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-[280px,minmax(0,1fr),340px]">
+      <div className="relative mt-4 grid gap-4 lg:grid-cols-[280px,minmax(0,1fr),340px]">
         <div className="flex flex-col gap-3">
           <OrbCard
             phase={phase}
@@ -1108,7 +1108,7 @@ export default function JarvisDemo() {
         </div>
 
         <div className="flex flex-col gap-3">
-        <div className="relative flex min-h-[360px] flex-col rounded-xl border border-bone/10 bg-black/70 p-4 font-mono text-[12.5px] leading-[1.55]">
+        <div className="relative flex min-h-[280px] flex-col rounded-xl border border-bone/10 bg-black/70 p-4 font-mono text-[12.5px] leading-[1.55] lg:min-h-[360px]">
           <div className="mb-3 flex items-center justify-between border-b border-bone/10 pb-2 text-[10px] uppercase tracking-[0.3em]">
             <span className="text-amber-300/70">
               ◐ session · {String(stepIdx + 1).padStart(2, "0")} /{" "}
@@ -1175,7 +1175,7 @@ export default function JarvisDemo() {
         </div>
 
         {/* skills — third column, side by side with simulator */}
-        <div className="flex min-h-[440px] flex-col rounded-xl border border-bone/10 bg-black/40 p-3">
+        <div className="flex max-h-[420px] flex-col rounded-xl border border-bone/10 bg-black/40 p-3 lg:max-h-none lg:min-h-[440px]">
           <div className="mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300/70">
             <span>[ skills · {SKILLS.length} ]</span>
             <span className="flex items-center gap-1.5 text-bone/40">
@@ -1345,7 +1345,7 @@ function OrbCard({
       onClick={onToggleMic}
       disabled={!supported}
       aria-label={live ? "stop listening" : "tap to talk"}
-      className={`group relative aspect-square w-full overflow-hidden rounded-2xl border bg-gradient-to-b from-black/60 to-black/30 transition disabled:cursor-not-allowed ${
+      className={`group relative mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-2xl border bg-gradient-to-b from-black/60 to-black/30 transition disabled:cursor-not-allowed lg:max-w-none ${
         live
           ? "border-cyan-400/60 shadow-[0_0_30px_-6px_rgba(34,211,238,0.6)]"
           : "border-amber-300/40 shadow-[0_0_30px_-8px_rgba(255,213,107,0.55)] hover:border-amber-300/70 hover:shadow-[0_0_40px_-4px_rgba(255,213,107,0.7)]"

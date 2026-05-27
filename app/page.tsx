@@ -651,69 +651,6 @@ function DesktopWorld() {
           )}
         </AnimatePresence>
 
-        {/* === NMS-STYLE HEX REGION MARKER — stacked, scroll-linked crossfade === */}
-        <div className="absolute left-1/2 bottom-28 z-30 hidden w-[min(94vw,560px)] -translate-x-1/2 lg:block">
-          {regions.map((reg, i) => (
-            <RegionLayer
-              key={reg.code + "-hexmark"}
-              i={i}
-              f={fProgress}
-              className="absolute inset-x-0 top-0"
-            >
-              <div
-                className="flex items-center gap-3 border border-amber-300/40 bg-black/65 px-3 py-2 backdrop-blur-md"
-                style={{
-                  clipPath: "polygon(14px 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 14px 100%, 0 50%)",
-                }}
-              >
-                <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0">
-                  <polygon
-                    points="16,2 28,9 28,23 16,30 4,23 4,9"
-                    fill="none"
-                    stroke="#ffd54a"
-                    strokeWidth="1.4"
-                  />
-                  <text x="16" y="20" textAnchor="middle" fill="#ffd54a" fontSize="11" fontFamily="monospace" fontWeight="600">
-                    {i + 1}
-                  </text>
-                </svg>
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em]">
-                    <span className="text-amber-300">▶ planet</span>
-                    <span className="text-amber-300/60">·</span>
-                    <span className="text-bone">{reg.codename}</span>
-                  </div>
-                  <div className="mt-0.5 font-mono text-xs uppercase tracking-[0.2em] text-bone truncate">
-                    {reg.region}
-                  </div>
-                  <div className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/60 truncate">
-                    {reg.classification}
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end gap-0.5">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300/80">
-                    arc · {i === chamberIdx ? (scrub * 100).toFixed(0).padStart(2, "0") : "--"}%
-                  </div>
-                  <div className="h-1 w-24 border border-bone/20 bg-bone/[0.05]">
-                    <div
-                      className="h-full bg-gradient-to-r from-amber-300 to-rose-400 transition-[width] duration-150"
-                      style={{
-                        width: `${(i === chamberIdx ? scrub : 0) * 100}%`,
-                        boxShadow: "0 0 6px rgba(255,213,74,0.6)",
-                      }}
-                    />
-                  </div>
-                  <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-bone/50">
-                    {i === chamberIdx ? actLabel(scrub) : ""}
-                  </div>
-                </div>
-              </div>
-            </RegionLayer>
-          ))}
-        </div>
-
         {/* TERMINAL LOG */}
         <TerminalLog log={log} />
 

@@ -26,7 +26,7 @@ export function RegionContent({
   return (
     <div
       data-region-content
-      className="pointer-events-auto fixed right-2 top-1/2 z-20 max-h-[78vh] -translate-y-1/2 overflow-hidden border border-bone/15 shadow-[0_30px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-200 sm:right-4 md:right-6 xl:right-8 xl:max-h-[72vh]"
+      className="pointer-events-auto fixed right-2 top-1/2 z-20 flex max-h-[82vh] -translate-y-1/2 flex-col overflow-hidden border border-bone/15 shadow-[0_30px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-200 sm:right-4 md:right-6 xl:right-8 xl:max-h-[78vh]"
       style={{
         background:
           "linear-gradient(to bottom right, rgba(255,255,255,0.10), rgba(255,255,255,0.04), transparent), rgba(4,6,14,0.85)",
@@ -50,8 +50,7 @@ export function RegionContent({
 
       <div
         data-region-content-scroll
-        className="overflow-y-auto px-5 py-6 sm:px-6 sm:py-7 md:px-8"
-        style={{ maxHeight: "calc(78vh - 42px)" }}
+        className="flex-1 min-h-0 overflow-y-auto px-5 py-6 sm:px-6 sm:py-7 md:px-8"
       >
         <RegionContentInner kind={kind} onMarkQuest={onMarkQuest} />
       </div>

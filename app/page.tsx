@@ -434,7 +434,7 @@ function DesktopWorld() {
         </aside>
 
         {/* QUEST LOG — stacked per-region, scroll-linked crossfade */}
-        <aside className="absolute left-6 top-[180px] z-30 hidden xl:block w-[260px]">
+        <aside className="absolute left-6 top-[120px] z-30 hidden xl:block w-[240px] 2xl:top-[180px] 2xl:w-[260px]">
           <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             quests · this region
           </div>
@@ -472,7 +472,7 @@ function DesktopWorld() {
         </aside>
 
         {/* COORDS */}
-        <aside className="absolute left-6 top-16 z-30 hidden xl:block">
+        <aside className="absolute left-6 top-12 z-30 hidden xl:block 2xl:top-16">
           <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             coords · live
           </div>
@@ -485,7 +485,7 @@ function DesktopWorld() {
         </aside>
 
         {/* FAST-TRAVEL */}
-        <aside className="pointer-events-auto absolute left-6 bottom-44 z-30 hidden xl:block">
+        <aside className="pointer-events-auto absolute left-6 bottom-28 z-30 hidden xl:block 2xl:bottom-44">
           <div className="mb-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-300">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a] animate-pulse" />
             fast-travel · tap to jump
@@ -523,8 +523,8 @@ function DesktopWorld() {
           </ul>
         </aside>
 
-        {/* READOUT — top-anchored, sits between quest log and fast-travel */}
-        <aside className="absolute left-6 top-[340px] z-30 hidden xl:block w-[240px]">
+        {/* READOUT — top-anchored, sits between quest log and fast-travel · hidden on tighter screens */}
+        <aside className="absolute left-6 top-[280px] z-30 hidden 2xl:block w-[240px]">
           <div className="mb-2 text-right font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
             readout
           </div>
@@ -573,7 +573,7 @@ function DesktopWorld() {
               className="mt-5 font-light uppercase tracking-tight text-bone"
               style={{
                 fontFamily: "var(--font-space-grotesk)",
-                fontSize: "clamp(2rem, 5.2vw, 5rem)",
+                fontSize: "clamp(1.6rem, 3.6vw, 5rem)",
                 lineHeight: 1.02,
               }}
             >

@@ -82,7 +82,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           <div className="absolute -left-10 bottom-10 h-60 w-60 rounded-full bg-violet-500/15 blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-[1720px] px-4 pt-16 pb-20 md:px-8 md:pt-24 md:pb-28">
+        <div className="relative mx-auto max-w-[1720px] px-4 pt-10 pb-12 md:px-8 md:pt-14 md:pb-16 lg:pt-20 lg:pb-20 2xl:pt-24 2xl:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/80">
             <div className="flex flex-wrap items-center gap-2">
               <span>▸ mission brief · {p.slug}</span>
@@ -102,7 +102,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
           <h1
             className="mt-3 font-light uppercase leading-[0.9] tracking-tight text-bone"
-            style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(2.5rem, 9vw, 8.5rem)" }}
+            style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(2rem, 6vw, 8.5rem)" }}
           >
             {p.name}
           </h1>
@@ -531,7 +531,7 @@ function SectionHead({
       </div>
       <h2
         className="mt-4 font-light uppercase leading-[0.95] tracking-tight text-bone"
-        style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(1.8rem, 4vw, 3.75rem)" }}
+        style={{ fontFamily: "var(--font-space-grotesk)", fontSize: "clamp(1.4rem, 2.8vw, 3.75rem)" }}
       >
         {title}
       </h2>

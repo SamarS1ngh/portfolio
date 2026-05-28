@@ -335,7 +335,7 @@ function DesktopWorld() {
               progressRef={progressRef}
               onPinClick={(s) => {
                 setActivePin(s);
-                pushLog(`mission target acquired · ${s}`, "ok");
+                pushLog(`project opened · ${s}`, "ok");
                 completeQuest("R0:pin");
               }}
               activePin={activePin}
@@ -364,7 +364,7 @@ function DesktopWorld() {
           <span className="hidden lg:flex items-center gap-3">
             <span className="text-bone/40">region</span>
             <span className="text-amber-300">{r.glyph}</span>
-            <span className="text-bone">{r.region}</span>
+            <span className="text-bone" style={{ fontFamily: "var(--font-orbitron)" }}>{r.region}</span>
             <span className="text-bone/30">·</span>
             <span>{(chamberIdx + 1).toString().padStart(2, "0")}/{regions.length.toString().padStart(2, "0")}</span>
             <span className="text-bone/30">·</span>
@@ -435,7 +435,8 @@ function DesktopWorld() {
 
         {/* QUEST LOG — stacked per-region, scroll-linked crossfade */}
         <aside className="absolute left-6 top-[170px] z-30 hidden xl:block w-[240px] 2xl:top-[180px] 2xl:w-[260px]">
-          <div className="mb-2 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
+          <div className="mb-2 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.3em] text-amber-300" style={{ fontFamily: "var(--font-orbitron)", fontWeight: 600 }}>
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#ffd54a] animate-pulse" />
             quests · this region
           </div>
           <div className="relative w-[260px]">
@@ -446,23 +447,23 @@ function DesktopWorld() {
                 f={fProgress}
                 className="absolute inset-x-0 top-0"
               >
-                <div className="rounded border border-bone/15 bg-black/60 p-3 backdrop-blur-md w-[260px]">
-                  <ul className="space-y-1.5">
+                <div className="rounded border-2 border-amber-300/45 bg-black/70 p-3 backdrop-blur-md w-[260px] shadow-[0_0_20px_-6px_rgba(255,213,107,0.45)]">
+                  <ul className="space-y-2">
                     {reg.quests.map((q) => {
                       const done = completedQuests.has(q.id);
                       return (
-                        <li key={q.id} className="flex items-start gap-2 font-mono text-[10px] leading-snug">
-                          <span className={`mt-px shrink-0 ${done ? "text-emerald-300" : "text-bone/40"}`}>
+                        <li key={q.id} className="flex items-start gap-2 font-mono text-[11px] leading-snug">
+                          <span className={`mt-px shrink-0 text-[13px] ${done ? "text-emerald-300" : "text-amber-300/80"}`}>
                             {done ? "◉" : "○"}
                           </span>
-                          <span className={done ? "text-bone/50 line-through" : "text-bone/90"}>
+                          <span className={done ? "text-bone/55 line-through" : "text-bone"}>
                             {q.label}
                           </span>
                         </li>
                       );
                     })}
                   </ul>
-                  <div className="mt-3 border-t border-bone/10 pt-2 font-mono text-[9px] uppercase tracking-widest text-bone/40">
+                  <div className="mt-3 border-t border-amber-300/20 pt-2 font-mono text-[10px] uppercase tracking-widest text-bone/60">
                     <span className="text-emerald-300">{reg.quests.filter((q) => completedQuests.has(q.id)).length}</span>/{reg.quests.length} cleared
                   </div>
                 </div>
@@ -541,12 +542,30 @@ function DesktopWorld() {
             <h2
               className="mt-5 font-light uppercase tracking-tight text-bone"
               style={{
-                fontFamily: "var(--font-space-grotesk)",
+                fontFamily: "var(--font-orbitron)",
                 fontSize: "clamp(1.6rem, 3.6vw, 5rem)",
                 lineHeight: 1.02,
               }}
             >
-              {reg.region}
+              {reg.region.split(" - ").map((part, idx, arr) => {
+                const isName = arr.length > 1 && idx === 0;
+                const isSub = arr.length > 1 && idx > 0;
+                return (
+                  <span
+                    key={idx}
+                    className="block"
+                    style={
+                      isName
+                        ? { fontFamily: "var(--font-orbitron)", fontWeight: 700, letterSpacing: "0.06em" }
+                        : isSub
+                        ? { fontSize: "0.55em", opacity: 0.9, marginTop: "0.25em", fontWeight: 600 }
+                        : undefined
+                    }
+                  >
+                    {part}
+                  </span>
+                );
+              })}
             </h2>
             <p
               className="mt-3 font-sans leading-relaxed text-bone"
@@ -632,7 +651,7 @@ function DesktopWorld() {
               className="pointer-events-auto fixed right-4 top-1/2 z-40 w-[min(92vw,540px)] -translate-y-1/2 border-2 border-amber-300/60 bg-[#04060e]/97 p-6 shadow-2xl md:right-8"
             >
               <div className="flex items-center justify-between border-b border-amber-300/30 pb-2 font-mono text-[10px] uppercase tracking-widest text-amber-300/80">
-                <span>mission · {selectedPin.slug}</span>
+                <span>project · {selectedPin.slug}</span>
                 <button onClick={() => setActivePin(null)} className="hover:text-bone">close ✕</button>
               </div>
               <div className="mt-4 font-mono text-[10px] uppercase tracking-widest text-bone/60">

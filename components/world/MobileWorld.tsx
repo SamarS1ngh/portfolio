@@ -15,28 +15,14 @@ const Stack3D = dynamic(
   { ssr: false },
 );
 
-// Plain-language nav · maps to sci-fi region codes
+// Plain-language nav · maps to region codes
 const NAV: { code: string; label: string }[] = [
-  { code: "R0", label: "about" },
-  { code: "R2", label: "work" },
+  { code: "R0", label: "origin" },
+  { code: "R2", label: "projects" },
   { code: "R3", label: "skills" },
-  { code: "R4", label: "interests" },
+  { code: "R4", label: "off the clock" },
   { code: "R6", label: "contact" },
 ];
-
-// Plain-language overrides for each region · used when plainMode = true
-type PlainCopy = { region: string; headline: string; biome: string };
-const PLAIN: Record<string, PlainCopy> = {
-  R0: { region: "ABOUT",     headline: "samar singh",          biome: "a quick intro" },
-  R1: { region: "BENCH LOG", headline: "what's on the bench.", biome: "what I'm working on this week" },
-  R2: { region: "WORK",      headline: "selected projects.",   biome: "things I've shipped" },
-  R3: { region: "SKILLS",    headline: "what I reach for.",    biome: "tools I use" },
-  R4: { region: "INTERESTS", headline: "off the clock.",       biome: "what I'm into outside of work" },
-  R5: { region: "NOW",       headline: "currently building.",  biome: "live status · this month" },
-  R6: { region: "CONTACT",   headline: "ping me back.",        biome: "get in touch" },
-};
-
-const PLAIN_KEY = "mobile.plainMode";
 
 
 export function MobileWorld() {
@@ -45,20 +31,6 @@ export function MobileWorld() {
   const idleRef = useRef(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
-  // default ON · plain language for first-time / non-tech users; toggle to sci-fi
-  const [plainMode, setPlainMode] = useState(true);
-
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? localStorage.getItem(PLAIN_KEY) : null;
-    if (saved === "0") setPlainMode(false);
-    if (saved === "1") setPlainMode(true);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(PLAIN_KEY, plainMode ? "1" : "0");
-    }
-  }, [plainMode]);
 
   useEffect(() => {
     const unsub = scrollYProgress.on("change", (v) => {
@@ -134,19 +106,9 @@ export function MobileWorld() {
               <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
               samar.dev
             </span>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setPlainMode((s) => !s)}
-                aria-pressed={plainMode}
-                title={plainMode ? "switch to sci-fi mode" : "switch to plain mode"}
-                className="rounded border border-bone/20 bg-bone/[0.04] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-bone/75 hover:border-amber-300/45 hover:text-amber-300"
-              >
-                {plainMode ? "plain" : "sci-fi"} ⇄
-              </button>
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-                {r.glyph} {r.code}
-              </span>
-            </div>
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
+              {r.glyph} {r.code}
+            </span>
           </div>
           {/* Plain-label nav · maps to sci-fi sections */}
           <nav
@@ -175,7 +137,7 @@ export function MobileWorld() {
         {/* Hero */}
         <section className="px-5 pt-10 pb-6">
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300">
-            ▸ {plainMode ? "hi, I'm samar singh" : "operator profile · samar singh"}
+            ▸ hi, I&apos;m samar singh
           </div>
           <h1
             className="mt-3 font-light text-3xl uppercase tracking-tight text-bone"
@@ -194,7 +156,7 @@ export function MobileWorld() {
                 className="flex items-center gap-2 border border-bone/15 bg-bone/[0.04] px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-bone backdrop-blur-sm hover:border-amber-300/40 hover:bg-amber-300/[0.10] hover:text-amber-300"
               >
                 <span className="text-amber-300">{reg.glyph}</span>
-                <span className="truncate">{plainMode ? PLAIN[reg.code].region : reg.region}</span>
+                <span className="truncate">{reg.region}</span>
               </a>
             ))}
           </nav>
@@ -202,7 +164,7 @@ export function MobileWorld() {
 
         {/* Sections — chapter break + intermission band + trimmed heavy content */}
         {regions.map((reg, i) => {
-          const copy = plainMode ? PLAIN[reg.code] : { region: reg.region, headline: reg.headline, biome: reg.biome };
+          const copy = { region: reg.region, headline: reg.headline, biome: reg.biome };
           return (
           <div key={reg.code}>
             <section
@@ -258,9 +220,27 @@ export function MobileWorld() {
 
                 <h2
                   className="mt-5 font-light text-[30px] leading-[1.05] uppercase tracking-tight text-bone"
-                  style={{ fontFamily: "var(--font-space-grotesk)" }}
+                  style={{ fontFamily: "var(--font-orbitron)" }}
                 >
-                  {copy.region}
+                  {copy.region.split(" - ").map((part, idx, arr) => {
+                    const isName = arr.length > 1 && idx === 0;
+                    const isSub = arr.length > 1 && idx > 0;
+                    return (
+                      <span
+                        key={idx}
+                        className="block"
+                        style={
+                          isName
+                            ? { fontFamily: "var(--font-orbitron)", fontWeight: 700, letterSpacing: "0.06em" }
+                            : isSub
+                            ? { fontSize: "0.55em", opacity: 0.9, marginTop: "0.25em", fontWeight: 600 }
+                            : undefined
+                        }
+                      >
+                        {part}
+                      </span>
+                    );
+                  })}
                 </h2>
                 <p className="mt-3 font-mono text-[13px] leading-relaxed text-bone tracking-normal">
                   {copy.headline}
@@ -309,7 +289,7 @@ export function MobileWorld() {
                     <span className="text-amber-300/80">{regions[i + 1].glyph}</span>
                   </div>
                   <div className="text-center font-mono text-[9px] uppercase tracking-[0.35em] text-bone/45">
-                    next · {plainMode ? PLAIN[regions[i + 1].code].region : regions[i + 1].region}
+                    next · {regions[i + 1].region}
                   </div>
                   <div className="flex flex-col items-center gap-1 pt-1">
                     <span className="h-3 w-px bg-amber-300/40" />

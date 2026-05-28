@@ -104,8 +104,8 @@ function OriginContent() {
           ▸ operator profile · samar singh
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           full-stack · mobile · ai.
         </h3>
@@ -187,8 +187,8 @@ function NotebookContent({ onRead }: { onRead: () => void }) {
           ▸ field notes · ~/bench.log
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           what's on the bench.
         </h3>
@@ -302,8 +302,8 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
           ▸ projects · {projects.length} in the list
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           Things I've built.
         </h3>
@@ -321,47 +321,56 @@ function MissionsContent({ onInspect }: { onInspect: () => void }) {
         </div>
       </div>
 
-      <ul className="space-y-3">
+      <ul className="space-y-4">
         {projects.map((p, i) => (
           <li key={p.slug}>
             <Link
               href={`/work/${p.slug}`}
               onClick={onInspect}
-              className="group relative block overflow-hidden border-2 border-bone/15 bg-bone/[0.04] p-4 transition-all hover:-translate-y-0.5 hover:border-amber-300/60 hover:bg-amber-300/[0.06] hover:shadow-[0_8px_24px_-8px_rgba(255,213,107,0.35)]"
+              className="group relative block overflow-hidden rounded border-2 border-amber-300/45 bg-amber-300/[0.04] p-5 shadow-[0_0_22px_-8px_rgba(255,213,107,0.45)] transition-all hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-300/[0.10] hover:shadow-[0_14px_36px_-10px_rgba(255,213,107,0.55)]"
             >
-              {/* hover sweep · subtle shine to signal interactivity */}
+              {/* hover sweep · subtle shine */}
               <span
                 aria-hidden
-                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent transition-transform duration-500 group-hover:translate-x-full"
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent transition-transform duration-500 group-hover:translate-x-full"
               />
 
-              {/* persistent tap arrow · top-right corner */}
+              {/* persistent tap badge · top-right corner */}
               <span
                 aria-hidden
-                className="absolute right-3 top-3 inline-flex items-center gap-1 rounded border border-amber-300/40 bg-amber-300/[0.10] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.25em] text-amber-200 transition group-hover:border-amber-300/80 group-hover:bg-amber-300/25 group-hover:text-amber-100"
+                className="absolute right-3 top-3 inline-flex items-center gap-1 rounded border border-amber-300/70 bg-amber-300/20 px-2 py-1 text-[10px] uppercase tracking-[0.28em] text-amber-100 shadow-[0_0_10px_-2px_rgba(255,213,107,0.5)] transition group-hover:border-amber-300 group-hover:bg-amber-300/35 group-hover:text-amber-50"
+                style={{ fontFamily: "var(--font-orbitron)", fontWeight: 600 }}
               >
                 tap ↗
               </span>
 
-              <div className="flex items-center justify-between pr-16 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/60">
+              <div className="flex items-center justify-between pr-20 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/65">
                 <span>#{String(i + 1).padStart(2, "0")} · {p.year}</span>
-                <span className="text-amber-300/80">{p.status}</span>
+                <span className="text-amber-300">{p.status}</span>
               </div>
               <div
-                className="mt-2 font-light text-xl uppercase tracking-wider text-bone group-hover:text-amber-300"
+                className="mt-2.5 font-light text-2xl uppercase tracking-wider text-amber-100 group-hover:text-amber-300 md:text-[26px]"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 {p.name}
               </div>
-              <p className="mt-1.5 font-sans text-[14px] leading-relaxed text-bone">{p.tagline}</p>
-              <div className="mt-3 flex flex-wrap gap-1 font-mono text-[10px] uppercase tracking-widest">
+              <p className="mt-2 font-sans text-[14.5px] leading-relaxed text-bone">{p.tagline}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] uppercase tracking-widest">
                 {p.tags.map((t) => (
-                  <span key={t} className="border border-bone/20 bg-bone/[0.06] px-1.5 py-0.5 text-bone">{t}</span>
+                  <span key={t} className="border border-amber-300/25 bg-amber-300/[0.06] px-2 py-0.5 text-bone/85">{t}</span>
                 ))}
               </div>
-              <div className="mt-3 flex items-center justify-end gap-1 font-mono text-[10px] uppercase tracking-widest text-amber-300/80 group-hover:text-amber-300">
+              <div
+                className="mt-4 flex items-center justify-end gap-1.5 text-[11px] uppercase tracking-widest text-amber-200 group-hover:text-amber-100"
+                style={{
+                  fontFamily: "var(--font-orbitron)",
+                  fontWeight: 600,
+                  textShadow:
+                    "0 0 4px rgba(255,213,107,0.9), 0 0 10px rgba(255,213,107,0.6), 0 0 18px rgba(255,170,40,0.35)",
+                }}
+              >
                 <span>read the story</span>
-                <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
                   ↗
                 </span>
               </div>
@@ -391,8 +400,8 @@ function ArmoryContent() {
           ▸ toolkit · what I reach for
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           The toolkit.
         </h3>
@@ -457,8 +466,8 @@ function CoveContent({ onTuneAll }: { onTuneAll: () => void }) {
           ▸ off-clock · what I'm into
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           When I'm not coding.
         </h3>
@@ -529,8 +538,8 @@ function DeckContent() {
           ▸ status · quick glance · updated {now.updated}
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           The short version.
         </h3>
@@ -587,8 +596,8 @@ function SummitContent({ onLink }: { onLink: () => void }) {
           ▸ contact · reach out
         </div>
         <h3
-          className="mt-3 font-light text-3xl uppercase tracking-tight text-bone md:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          className="mt-3 font-light text-2xl uppercase tracking-tight text-bone md:text-3xl"
+          style={{ fontFamily: "var(--font-orbitron)" }}
         >
           Say hi.
         </h3>

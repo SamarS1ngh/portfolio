@@ -371,24 +371,31 @@ function NotebookTrim() {
 
 function MissionsTrim() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {projects.map((p) => (
         <Link
           key={p.slug}
           href={`/work/${p.slug}`}
-          className="block rounded border border-bone/15 bg-bone/[0.03] p-4 backdrop-blur-sm hover:border-amber-300/40 hover:bg-amber-300/[0.06]"
+          className="relative block rounded border-2 border-amber-300/45 bg-amber-300/[0.04] p-4 shadow-[0_0_18px_-8px_rgba(255,213,107,0.45)] backdrop-blur-sm transition hover:border-amber-300 hover:bg-amber-300/[0.10]"
         >
-          <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.3em] text-bone/40">
+          <span
+            aria-hidden
+            className="absolute right-3 top-3 inline-flex items-center gap-1 rounded border border-amber-300/70 bg-amber-300/20 px-2 py-0.5 text-[10px] uppercase tracking-[0.28em] text-amber-100"
+            style={{ fontFamily: "var(--font-orbitron)", fontWeight: 600 }}
+          >
+            tap ↗
+          </span>
+          <div className="flex items-center justify-between pr-16 font-mono text-[9px] uppercase tracking-[0.3em] text-bone/55">
             <span>{p.year}</span>
             <span className={statusColor(p.status)}>{p.status}</span>
           </div>
           <div
-            className="mt-2 font-light text-xl uppercase tracking-tight text-bone"
+            className="mt-2 font-light text-xl uppercase tracking-wider text-amber-100"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
             {p.name}
           </div>
-          <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-bone/55">
+          <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-bone/60">
             {p.role}
           </div>
           <p className="mt-2 font-sans text-[14px] leading-snug text-bone line-clamp-2">
@@ -396,10 +403,22 @@ function MissionsTrim() {
           </p>
           <div className="mt-3 flex flex-wrap gap-1 font-mono text-[9px] uppercase tracking-widest">
             {p.tags.slice(0, 3).map((t) => (
-              <span key={t} className="border border-bone/15 bg-bone/[0.04] px-1.5 py-0.5 text-bone/65">
+              <span key={t} className="border border-amber-300/25 bg-amber-300/[0.06] px-1.5 py-0.5 text-bone/80">
                 {t}
               </span>
             ))}
+          </div>
+          <div
+            className="mt-3 flex items-center justify-end gap-1 text-[10px] uppercase tracking-widest text-amber-200"
+            style={{
+              fontFamily: "var(--font-orbitron)",
+              fontWeight: 600,
+              textShadow:
+                "0 0 4px rgba(255,213,107,0.9), 0 0 10px rgba(255,213,107,0.55), 0 0 16px rgba(255,170,40,0.3)",
+            }}
+          >
+            <span>read the story</span>
+            <span aria-hidden>↗</span>
           </div>
         </Link>
       ))}

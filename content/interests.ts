@@ -7,7 +7,8 @@ export type Interest = {
 export const interests: Record<"anime" | "manga" | "games" | "music" | "shows", Interest[]> = {
   anime: [
     { title: "Witch Hat Atelier", tag: "currently watching" },
-    { title: "Fire Force", tag: "currently watching" },
+    { title: "Kill Blue", tag: "currently watching" },
+    { title: "Black Clover", tag: "currently watching" },
   ],
   manga: [
     { title: "The Investor Who Sees the Future", tag: "manhwa · current" },
@@ -23,13 +24,13 @@ export const interests: Record<"anime" | "manga" | "games" | "music" | "shows", 
   ],
   music: [
     {
-      title: "Staring at the Sun",
-      tag: "TV on the Radio",
+      title: "Snake Charmer",
+      tag: "Badal",
       note: "Latest on repeat.",
     },
     {
-      title: "Headlock",
-      tag: "Imogen Heap",
+      title: "Makeen (feat. Kieyomii)",
+      tag: "Music BM",
       note: "Latest on repeat.",
     },
   ],

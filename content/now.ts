@@ -1,7 +1,7 @@
 export const now = {
   updated: "2026-05-16",
   location: "Hyderabad, IN",
-  focus: "Teaching Jarvis to remember things. Polishing nocap for beta users.",
+  focus: "Teaching Jarvis to remember things. Getting RentRoll demo-ready for its first landlords.",
   building: [
     {
       title: "Long-term memory for Jarvis",
@@ -9,8 +9,8 @@ export const now = {
       status: "wip",
     },
     {
-      title: "nocap beta",
-      note: "Mobile app that uses AI to filter your phone notifications. Fixing onboarding and making the filter smarter — it learns from your past behaviour using a memory + point-based system, so it gets better at knowing what matters with every notification you accept or dismiss.",
+      title: "RentRoll",
+      note: "A landlord-first rent manager for small Indian landlords — multi-flat ledger, UPI QR rent, WhatsApp reminders, and a one-tap tenant portal. Just shipped a public no-login demo and a per-bed PG mode; next up is auto-reconcile and a year-end tax export.",
       status: "wip",
     },
     {
@@ -39,18 +39,19 @@ export const now = {
       note: "Tried bundling Jarvis with a Tauri shell. The background piece kept crashing. Moved it to a normal system service — works fine now.",
     },
     {
-      title: "Tiny on-phone AI model for nocap",
-      note: "Tried putting a small AI model directly on the phone. Too big and too slow. Cloud AI (Gemini Flash) was cheaper and faster end-to-end.",
+      title: "Logged-in iframe for the RentRoll demo",
+      note: "Wanted to embed the live dashboard in the portfolio, logged in. Third-party cookies get blocked inside a cross-origin iframe, so it kept bouncing to login. Built a public no-login /demo route instead — works in every browser.",
     },
   ],
   reading: [
     "The Investor Who Sees the Future (manhwa)",
     "The Max-Level Player's 100th Regression (manhwa)",
   ],
-  listening: "anything, honestly. Latest on repeat: Staring at the Sun — TV on the Radio · Headlock — Imogen Heap",
+  listening: "anything, honestly. Latest on repeat: Snake Charmer — Badal · Makeen (feat. Kieyomii) — Music BM",
   watching: [
     "Witch Hat Atelier (anime)",
-    "Fire Force (anime)",
+    "Kill Blue (anime)",
+    "Black Clover (anime)",
     "Bloodhounds (kdrama)",
     "Two and a Half Men (sitcom)",
   ],
@@ -60,7 +61,7 @@ export const now = {
   ],
   onDeck: [
     "Make Jarvis pull memories while we talk by voice.",
-    "Get nocap onto 10 people's phones.",
+    "Get RentRoll in front of 10 small landlords.",
     "Ship the first version of Ledger — record and close transactions.",
   ],
 };

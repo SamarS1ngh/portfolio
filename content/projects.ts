@@ -45,6 +45,8 @@ export type Project = {
   playstoreUrl?: string;
   heroVideo?: string;
   heroPoster?: string;
+  // real product screenshots — rendered as a gallery on the brief page
+  shots?: { src: string; label: string }[];
 };
 
 export const projects: Project[] = [
@@ -222,6 +224,96 @@ export const projects: Project[] = [
     repo: "https://github.com/SamarS1ngh",
     heroVideo: "/reels/nocap.mp4",
     heroPoster: "/reels/nocap.jpg",
+  },
+  {
+    slug: "rent-roll",
+    name: "RentRoll",
+    year: "2026—",
+    role: "solo · full-stack · product",
+    blurb: "rent operations for small Indian landlords",
+    tagline: "The landlord who owns 8 flats runs them from a notebook and a panic-scroll through WhatsApp on the 5th. RentRoll is the ledger that chases rent for them — every flat, every tenant, every month, in one screen.",
+    stack: ["Next.js 16", "React 19", "TypeScript", "Drizzle", "Neon Postgres", "NextAuth v5", "Tailwind v4", "S3"],
+    tags: ["web", "saas"],
+    status: "active",
+    problem:
+      "Small landlords — 3 to 15 flats — are too big for memory and too small for property managers. They track rent in a notebook or an Excel tab, chase late payers by hand in WhatsApp, and rebuild the whole year from scratch at tax time. The marketplace apps (NoBroker and friends) help them *find* a tenant; nobody helps them *run the place* after move-in. That after-move-in gap is the whole product.",
+    why:
+      "I watched it happen up close: rent is owed by eight people on eight different days, someone pays half now and half later, one transfer is missing, and the landlord is scrolling chat history at midnight trying to remember who's clear. It's not a hard problem — it's an un-built one, because it's unglamorous and the buyer doesn't search for software. I wanted the boring tool that makes the 5th-of-the-month stop being a chore.",
+    architecture:
+      "Two faces, one ledger. Landlords get a dashboard; tenants get a thin portal — both read the same data. The spine is a clean hierarchy: a property holds flats, a flat holds a tenancy, a tenancy generates monthly rent invoices, and payments settle against those invoices. A daily cron job wakes up, mints that month's invoices, and fires reminders over email and WhatsApp so the landlord never has to remember. Tenants don't sign up — the landlord sends an invite link, the tenant taps it and claims their flat. Money moves over a UPI QR generated per invoice, so there's no payment-gateway tax on day one. Auth, file storage for documents, and a guest demo mode round it out.",
+    architectureMap: `┌──────────────┐         ┌──────────────┐
+│  landlord    │         │   tenant     │
+│  dashboard   │         │   portal     │
+└──────┬───────┘         └──────┬───────┘
+       │   one shared ledger    │
+       ▼                        ▼
+┌─────────────────────────────────────────┐
+│  property ─► flat ─► tenancy ─► invoice  │
+│                              └─► payment │
+└───────────────┬─────────────────────────┘
+                │
+   ┌────────────┼─────────────┐
+   ▼            ▼             ▼
+┌────────┐ ┌──────────┐ ┌──────────────┐
+│ UPI QR │ │ daily    │ │ invite/claim │
+│ per    │ │ cron:    │ │ link · tenant│
+│ invoice│ │ invoice  │ │ onboards in  │
+│        │ │ +remind  │ │ one tap      │
+└────────┘ └────┬─────┘ └──────────────┘
+                │ email + WhatsApp
+                ▼
+         landlord stops chasing`,
+    challenge:
+      "Modelling one schema that fits both a whole-flat rental and a per-bed PG / co-living room without forking the codebase. A 2BHK let to one family and a 6-bed sharing room are the same primitive — a tenancy — but one bills a flat and the other bills a bed. Landed on an occupancy mode on the flat (whole vs shared) plus a capacity and a bed label on the tenancy, so the ledger, invoicing, and reminders all stay identical whether you rent rooms or beds. One model, two very different businesses.",
+    challengeStats: [
+      { k: "domain tables", v: "11" },
+      { k: "feature modules", v: "9" },
+      { k: "audiences served", v: "2" },
+      { k: "occupancy modes", v: "whole + bed" },
+    ],
+    tradeoffs: [
+      "Manual-UPI-first over a payment gateway · a QR plus a mark-paid flag gets a landlord collecting rent on day one with zero Razorpay/Stripe onboarding. Cost: reconciliation is a tap, not automatic — the gateway (and auto-match) is a deliberate later step, not a launch blocker.",
+      "WhatsApp via a wa.me deep link, not the Business API · ships the reminder loop now without Meta template approval. The link pre-fills the message; the API that sends it unattended is the next upgrade, gated behind real users, not built on spec.",
+      "Invite-and-claim onboarding over tenant self-signup · landlords own the data and tenants join in one tap, but it means building a token + claim flow instead of leaning on a signup form.",
+    ],
+    scale:
+      "Built landlord-shaped, not viral-shaped: one landlord with tens of flats and tenants, not millions of anonymous users. The heavy lifting is a once-a-day cron, not a hot request path, so cost is near-flat — serverless Postgres on Neon, object storage for documents, and UPI rails that charge nothing per transfer. The realistic ceiling is the daily job's runtime as invoice count grows, which batches cleanly long before it's a wall.",
+    future:
+      "WhatsApp Business API so reminders send themselves at 9am. UPI auto-reconcile — match the money that lands in the account to the invoice it pays, no tap. A one-button year-end income export shaped for India's 'Income from House Property' tax head. Razorpay for landlords who want cards + autopay. A built-in referral nudge, since one happy landlord knows ten others.",
+    futureMilestones: [
+      { state: "done", label: "PG / co-living mode · bill by the bed" },
+      { state: "wip", label: "billing · UPI QR + manual mark-paid" },
+      { state: "planned", label: "whatsapp business api · auto-send reminders" },
+      { state: "planned", label: "auto-reconcile + year-end tax export" },
+    ],
+    decisions: [
+      {
+        title: "One ledger, two audiences",
+        body: "Landlord dashboard and tenant portal are two doors into the same data — a property holds flats, a flat holds a tenancy, a tenancy bills invoices, payments settle them. No second user table, no syncing two views of 'who owes what'. The ledger is the single source of truth and everything else is a window onto it.",
+      },
+      {
+        title: "Let the robot chase the rent",
+        body: "A daily cron job generates each month's invoices and fires email + WhatsApp reminders on its own. The whole pitch is 'stop chasing rent in WhatsApp' — so the chasing had to be the machine's job, not a button the landlord remembers to press.",
+      },
+      {
+        title: "Same schema rents a flat or a bed",
+        body: "A flat carries an occupancy mode — whole or shared — and a tenancy can point at a single bed with a label and a capacity. PG and co-living owners (higher pain, higher willingness to pay) run on the exact same invoicing and reminder code as a family renting a 2BHK. One model unlocked a second market.",
+      },
+    ],
+    outcome:
+      "Core loop works end to end on a live demo: create a property, add flats, invite a tenant who claims in one tap, auto-generate invoices, collect over UPI, and remind by WhatsApp — plus complaints, notices, and document storage. PG-by-the-bed mode shipped. Honest status: pre-revenue, with billing hardening and the auto-send / auto-reconcile upgrades as the road to the first paying landlord.",
+    repo: "https://github.com/SamarS1ngh",
+    liveUrl: "https://rent-manager-weld.vercel.app/",
+    shots: [
+      { src: "/shots/rent-roll/dashboard.png", label: "landlord dashboard · month at a glance + 6-month chart" },
+      { src: "/shots/rent-roll/rent.png", label: "rent · who owes what, with UPI + whatsapp reminder" },
+      { src: "/shots/rent-roll/tenant-portal-upi.png", label: "tenant portal · scan-to-pay UPI QR + payment history" },
+      { src: "/shots/rent-roll/tenants.png", label: "tenants · status, dues & open issues per person" },
+      { src: "/shots/rent-roll/properties.png", label: "properties · flats + occupancy on one page" },
+      { src: "/shots/rent-roll/tenant-record.png", label: "tenant record · india fields, deposit, app invite" },
+      { src: "/shots/rent-roll/complaints.png", label: "complaints · who reported it & where" },
+      { src: "/shots/rent-roll/claim-onboarding.png", label: "onboarding · tenant claims their flat in one tap" },
+    ],
   },
   {
     slug: "eeo-modules",

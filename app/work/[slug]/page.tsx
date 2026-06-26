@@ -4,6 +4,7 @@ import { getProject, projects, type Project } from "@/content/projects";
 import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
+import { LiveShowcase } from "./LiveShowcase";
 
 const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap", "eeo-modules"]);
 
@@ -129,6 +130,15 @@ export default function Page({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
+
+      {/* Screens — live embed + real product captures, when present */}
+      {p.liveUrl && !SLUGS_WITH_DEMO.has(p.slug) && (
+        <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
+          <WideSection index="00" label="field log · live demo + screens">
+            <LiveShowcase liveUrl={p.liveUrl} shots={p.shots} name={p.name} />
+          </WideSection>
+        </section>
+      )}
 
       {/* Wide showcase — interactive simulator when it exists. Skip §00 entirely for
           client builds without a public-friendly demo (NDA). */}

@@ -130,7 +130,7 @@ export const regions: Region[] = [
   {
     code: "R5", region: "RIGHT NOW", codename: "MIRA-IV", classification: "GAS-GIANT · OBSERVABLE", title: "status", jp: "観測台",
     headline: "currently building.",
-    serif: "jarvis memory · nocap beta · eeo ledger primitives.",
+    serif: "jarvis memory · rentroll demo · live.",
     biome: "currently building",
     tint: "rgba(20,90,80,0.42)",
     glyph: "≋",

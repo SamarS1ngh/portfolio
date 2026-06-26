@@ -43,8 +43,8 @@ const layers = [
     code: "L.04",
     title: "STATUS",
     head: "currently building.",
-    sub: "jarvis memory · nocap beta · eeo ledger",
-    side: "live · 2026.05",
+    sub: "jarvis memory · rentroll demo",
+    side: "live · 2026.06",
   },
   {
     z: 5,

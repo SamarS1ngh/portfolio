@@ -6,7 +6,7 @@ import { StickerCard } from "@/components/ui/StickerCard";
 import { Blobs } from "@/components/ui/Blobs";
 
 const channels = [
-  { label: "currently · jarvis memory + nocap beta", title: "now" },
+  { label: "currently · jarvis memory + rentroll demo", title: "now" },
   { label: "6 things on the bench", title: "work ↗" },
   { label: "tap-tap-typed in 7y", title: "stack" },
   { label: "tune any frequency", title: "freq" },
@@ -96,7 +96,7 @@ export function Splash() {
                 ◐ status
               </div>
               <div className="mt-2 font-display text-xl font-medium text-ink">
-                shipping<br />jarvis + nocap
+                shipping<br />jarvis + rentroll
               </div>
               <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-ink/50">
                 live · {new Date().toISOString().slice(0, 10)}

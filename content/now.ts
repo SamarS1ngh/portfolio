@@ -1,5 +1,5 @@
 export const now = {
-  updated: "2026-05-16",
+  updated: "2026-06-26",
   location: "Hyderabad, IN",
   focus: "Teaching Jarvis to remember things. Getting RentRoll demo-ready for its first landlords.",
   building: [
@@ -12,11 +12,6 @@ export const now = {
       title: "RentRoll",
       note: "A landlord-first rent manager for small Indian landlords — multi-flat ledger, UPI QR rent, WhatsApp reminders, and a one-tap tenant portal. Just shipped a public no-login demo and a per-bed PG mode; next up is auto-reconcile and a year-end tax export.",
       status: "wip",
-    },
-    {
-      title: "Ledger module for EEO",
-      note: "A document management tool for organizations. Stores, tracks, and links documents across teams — so a contract, an invoice, or a policy has one home, one audit trail, and lives where the people who need it can find it.",
-      status: "early",
     },
   ],
   experiments: [
@@ -31,6 +26,10 @@ export const now = {
     {
       title: "Faster memory search for Jarvis",
       note: "Trying different ways to store and look up memories so Jarvis pulls the right past chat faster and more accurately as the memory grows.",
+    },
+    {
+      title: "Auto-sending RentRoll reminders",
+      note: "Wiring the WhatsApp Business API so rent reminders fire on their own at 9am, instead of the current tap-to-send link. The chasing should be the machine's job.",
     },
   ],
   deadEnds: [
@@ -62,6 +61,6 @@ export const now = {
   onDeck: [
     "Make Jarvis pull memories while we talk by voice.",
     "Get RentRoll in front of 10 small landlords.",
-    "Ship the first version of Ledger — record and close transactions.",
+    "Ship RentRoll billing — UPI auto-reconcile + a year-end tax export.",
   ],
 };

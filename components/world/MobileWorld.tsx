@@ -512,11 +512,11 @@ function SummitTrim() {
   return (
     <div className="space-y-3">
       <a
-        href="mailto:hello@samar.dev"
+        href="mailto:singhsamar2002@gmail.com"
         className="flex items-center gap-3 rounded border border-bone/20 bg-bone/[0.06] px-4 py-3.5 transition hover:border-amber-300/45 hover:bg-amber-300/[0.06]"
       >
         <GmailIcon />
-        <span className="flex-1 font-sans text-[15px] text-bone/95">hello@samar.dev</span>
+        <span className="flex-1 font-sans text-[15px] text-bone/95">singhsamar2002@gmail.com</span>
         <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-bone/45">gmail</span>
       </a>
       <a
@@ -530,11 +530,12 @@ function SummitTrim() {
         </span>
         <span className="font-mono text-[10px] tracking-widest text-bone/45">pdf</span>
       </a>
-      <ul className="grid grid-cols-3 gap-2 font-mono text-[10px] uppercase tracking-widest">
+      <ul className="grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-widest">
         {[
-          { key: "github",   href: "https://github.com/samarnarangi",      label: "github"   },
-          { key: "x",        href: "https://x.com/samarnarangi",           label: "x"        },
-          { key: "linkedin", href: "https://linkedin.com/in/samarnarangi", label: "linkedin" },
+          { key: "github",    href: "https://github.com/SamarS1ngh",             label: "github"    },
+          { key: "x",         href: "https://x.com/Samar_S1ngh",                 label: "x"         },
+          { key: "linkedin",  href: "https://www.linkedin.com/in/samarsingh14/", label: "linkedin"  },
+          { key: "instagram", href: "https://www.instagram.com/samar_sin_/",     label: "instagram" },
         ].map((l) => (
           <li key={l.key}>
             <a
@@ -585,6 +586,13 @@ function SocialIcon({ name }: { name: string }) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden className={c}>
         <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.28V1.72C24 .77 23.21 0 22.22 0Z"/>
+      </svg>
+    );
+  }
+  if (name === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden className={c}>
+        <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.88 5.88 0 0 0-2.13 1.38A5.88 5.88 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.47 1.38 2.13a5.88 5.88 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.13-1.38 5.88 5.88 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.38-2.13A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0Zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84Zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4Zm7.85-10.4a1.44 1.44 0 1 1-1.44-1.44 1.44 1.44 0 0 1 1.44 1.44Z"/>
       </svg>
     );
   }

@@ -45,18 +45,17 @@ function MacFrame({
   );
 }
 
-export function LiveShowcase({
-  liveUrl,
+// standalone screenshots grid + lightbox — used by LiveShowcase and directly by
+// briefs that have real captures but no live URL yet
+export function ShotGallery({
   shots,
+  frameUrl,
   name,
 }: {
-  liveUrl: string;
-  shots?: Shot[];
-  name: string;
+  shots: Shot[];
+  frameUrl: string;
+  name?: string;
 }) {
-  const base = liveUrl.endsWith("/") ? liveUrl : liveUrl + "/";
-  const demoUrl = base + "demo";
-  const host = hostOf(liveUrl);
   const [active, setActive] = useState<Shot | null>(null);
 
   // close lightbox on Escape
@@ -72,6 +71,74 @@ export function LiveShowcase({
       document.body.style.overflow = "";
     };
   }, [active]);
+
+  return (
+    <div className="space-y-6">
+      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/55">
+        ▸ screens · click any to enlarge
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {shots.map((s) => (
+          <figure key={s.src}>
+            <MacFrame url={frameUrl} onClick={() => setActive(s)}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={s.src}
+                alt={s.label}
+                loading="lazy"
+                className="w-full bg-white transition-opacity duration-200 group-hover:opacity-90"
+              />
+            </MacFrame>
+            <figcaption className="mt-2 font-mono text-[11px] leading-snug tracking-wide text-bone/60">
+              {s.label}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      {/* lightbox */}
+      {active && (
+        <div
+          onClick={() => setActive(null)}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-10"
+        >
+          <button
+            onClick={() => setActive(null)}
+            aria-label="Close preview"
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-bone/25 bg-black/50 font-mono text-lg text-bone/80 transition hover:border-amber-300/60 hover:text-amber-300"
+          >
+            ✕
+          </button>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[88vh] w-full max-w-6xl overflow-auto rounded-xl border border-bone/20 bg-[#0a0d18] shadow-2xl"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={active.src} alt={active.label} className="w-full bg-white" />
+          </div>
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone/70">
+            {active.label}
+          </p>
+        </div>
+      )}
+
+      {name && <span className="sr-only">{name} — screen captures</span>}
+    </div>
+  );
+}
+
+export function LiveShowcase({
+  liveUrl,
+  shots,
+  name,
+}: {
+  liveUrl: string;
+  shots?: Shot[];
+  name: string;
+}) {
+  const base = liveUrl.endsWith("/") ? liveUrl : liveUrl + "/";
+  const demoUrl = base + "demo";
+  const host = hostOf(liveUrl);
 
   return (
     <div className="space-y-6">
@@ -112,31 +179,7 @@ export function LiveShowcase({
       </div>
 
       {/* screenshots — click to preview */}
-      {shots && shots.length > 0 && (
-        <>
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/55">
-            ▸ screens · click any to enlarge
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {shots.map((s) => (
-              <figure key={s.src}>
-                <MacFrame url={host} onClick={() => setActive(s)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={s.src}
-                    alt={s.label}
-                    loading="lazy"
-                    className="w-full bg-white transition-opacity duration-200 group-hover:opacity-90"
-                  />
-                </MacFrame>
-                <figcaption className="mt-2 font-mono text-[11px] leading-snug tracking-wide text-bone/60">
-                  {s.label}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </>
-      )}
+      {shots && shots.length > 0 && <ShotGallery shots={shots} frameUrl={host} />}
 
       <div className="text-right">
         <a
@@ -148,32 +191,6 @@ export function LiveShowcase({
           marketing site ↗ {host}
         </a>
       </div>
-
-      {/* lightbox */}
-      {active && (
-        <div
-          onClick={() => setActive(null)}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-10"
-        >
-          <button
-            onClick={() => setActive(null)}
-            aria-label="Close preview"
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-bone/25 bg-black/50 font-mono text-lg text-bone/80 transition hover:border-amber-300/60 hover:text-amber-300"
-          >
-            ✕
-          </button>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[88vh] w-full max-w-6xl overflow-auto rounded-xl border border-bone/20 bg-[#0a0d18] shadow-2xl"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={active.src} alt={active.label} className="w-full bg-white" />
-          </div>
-          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone/70">
-            {active.label}
-          </p>
-        </div>
-      )}
 
       <span className="sr-only">{name} — live demo and captures</span>
     </div>

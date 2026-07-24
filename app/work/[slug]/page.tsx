@@ -4,7 +4,7 @@ import { getProject, projects, type Project } from "@/content/projects";
 import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
-import { LiveShowcase } from "./LiveShowcase";
+import { LiveShowcase, ShotGallery } from "./LiveShowcase";
 
 const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap", "eeo-modules"]);
 
@@ -157,8 +157,20 @@ export default function Page({ params }: { params: { slug: string } }) {
         </section>
       )}
 
-      {/* Confident client-build dossier · only for projects without a live demo */}
-      {!SLUGS_WITH_DEMO.has(p.slug) && (
+      {/* Screens only — real captures for projects without a live URL or simulator */}
+      {!p.liveUrl && !SLUGS_WITH_DEMO.has(p.slug) && p.shots && p.shots.length > 0 && (
+        <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
+          <WideSection index="00" label="field log · screens">
+            <div className="space-y-4">
+              <ShotGallery shots={p.shots} frameUrl={p.name.toLowerCase()} name={p.name} />
+              <ExternalLinks repo={p.repo} playstoreUrl={p.playstoreUrl} />
+            </div>
+          </WideSection>
+        </section>
+      )}
+
+      {/* Confident client-build dossier · anonymized freelance work only */}
+      {!SLUGS_WITH_DEMO.has(p.slug) && p.client && (
         <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 pt-8 pb-12 md:px-8 md:pt-12 md:pb-20">
           <ClientDossier project={p} />
         </section>

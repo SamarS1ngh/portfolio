@@ -316,6 +316,174 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "negotiator-noir",
+    name: "Negotiator Noir",
+    year: "2026—",
+    role: "solo · design + code + art direction",
+    blurb: "a manipulation duel in noir comic ink",
+    tagline:
+      "You sit across a table from one person at a time — read their mood, deduce their hidden agenda, find the lever that moves them — inside a six-chapter crime story. Secretly, it's a negotiation course: every mission drills one real principle, from BATNA to moral hazard, and the debrief names it only after you've used it.",
+    stack: ["TypeScript", "Vite", "Capacitor", "Vitest", "zero frameworks", "AI concept art"],
+    tags: ["web", "mobile"],
+    status: "active",
+    problem:
+      "Games about persuasion reduce it to a dice roll or a 'charisma 7' skill check. And the real material — negotiation, leverage, power dynamics — lives in dry business books nobody finishes. Nothing actually makes you practise reading a person under pressure.",
+    why:
+      "I was learning this stuff anyway — negotiation, economics, power — and the lessons only stuck when I used them. So I built the trainer I wanted: a noir thriller where the only weapon is the other person's psychology, and the debrief tells you the name of the move you just pulled.",
+    architecture:
+      "Three clean layers. The story is pure data — 35+ mission files, each a branching scene with forks, requirement flags, and outcomes that rewrite the world. The rules are pure functions — the corkboard of people around a target (everyone carries a disposition from enemy to ally), the campaign state (money, faction standing, bonds, a ledger of what you did), all deterministic reducers covered by tests. The UI is hand-rolled TypeScript that just renders state — no React, no game engine. Capacitor wraps the same bundle into an Android app.",
+    architectureMap: `┌────────────────────────────────┐
+│  content · 35+ mission files   │
+│  branching beats · outcomes    │
+└───────────────┬────────────────┘
+                ▼
+┌────────────────────────────────┐
+│  domain · pure reducers        │
+│  board · campaign · mission    │
+│  money · bonds · factions      │
+└───────────────┬────────────────┘
+                ▼
+┌────────────────────────────────┐
+│  ui · hand-rolled TS panels    │
+│  corkboard · duel · debrief    │
+└───────────────┬────────────────┘
+                │ debrief names the move
+                ▼
+     ┌───────────────────────┐
+     │ codex · the black book│
+     │ 19 principles learned │
+     └───────────────────────┘`,
+    challenge:
+      "Choices that matter without a combinatorial explosion. Every mission ending bends the world — someone turned, someone burned, a faction cooled — and later chapters have to read that state and react. The fix was a flag ledger plus small numeric scales (bonds 0–4, faction standing 0–4) instead of forking whole storylines: outcomes write flags, scenes read them, and one set of missions serves many different pasts.",
+    challengeStats: [
+      { k: "chapters", v: "6" },
+      { k: "mission scenes", v: "35+" },
+      { k: "principles taught", v: "19" },
+      { k: "frameworks used", v: "0" },
+    ],
+    tradeoffs: [
+      "No engine, no framework · the whole game is data + reducers + hand-built panels. Tiny bundle, total control — but every speech bubble, meter, and corkboard pin was made by hand.",
+      "Authored branching over simulation · hand-written forks read better than any generated dialogue, but every path costs writing. The flag system keeps the explosion in check.",
+      "AI art under strict art direction · concept art in hours instead of weeks, but consistency is the fight — took a corrected crisp-ink pass and a per-opponent lighting system to make it feel like one book.",
+    ],
+    scale:
+      "Single-player and fully offline — no server, no accounts. Saves are checkpoints on the device. The only thing that grows is content, so the ceiling is writing time, not infrastructure.",
+    future:
+      "Lock the art style across the full cast, finish the panel art for every chapter, then ship the Android build through Capacitor. After that: more opponents, and a new-game-plus that remixes missions against what your codex says you've already mastered.",
+    futureMilestones: [
+      { state: "done", label: "full 6-chapter campaign · learning engine · saves" },
+      { state: "done", label: "playable prologue · interactive reads for the cast" },
+      { state: "wip", label: "art lock · crisp comic ink + per-opponent lighting" },
+      { state: "planned", label: "android release via capacitor" },
+    ],
+    decisions: [
+      {
+        title: "A teaching engine wearing a thriller's skin",
+        body: "Every mission is built around one real principle — interests-not-positions, anchoring, moral hazard, walk-away power. You use it under pressure first; the debrief names it afterwards, plain-words version first, real term anchored to it second. The codex ('the black book') collects only what you've actually used.",
+      },
+      {
+        title: "Pure reducers, dumb UI",
+        body: "The board, the campaign, the missions — all deterministic functions that take state and return new state, covered by tests. The UI never decides anything; it just draws. That made saves trivial (serialize the state) and made the game testable like a library.",
+      },
+      {
+        title: "Two-layer moves — the angle, then the words",
+        body: "Your turn is a read and a gamble twice over: pick the angle (disarm, press, bribe, push), then the exact words. Prep on the corkboard unlocks approaches — walk in blind and options are literally missing from the table.",
+      },
+    ],
+    outcome:
+      "The full six-chapter campaign runs end to end — corkboard, duels, consequences, codex — with checkpointed saves and a playable prologue. Honest status: pre-release. The screens below are concept art and UI mockups from the art-direction phase, being locked before the final art pass.",
+    repo: "https://github.com/SamarS1ngh/negotiator-noir",
+    shots: [
+      { src: "/shots/negotiator-noir/duel-screen.png", label: "duel screen mockup · mood, composure, a live tell + the two-layer move" },
+      { src: "/shots/negotiator-noir/opponent-kingpin.jpg", label: "the old kingpin · crisp-ink art direction" },
+      { src: "/shots/negotiator-noir/opponent-femme.jpg", label: "the femme fatale · per-opponent lighting palette" },
+      { src: "/shots/negotiator-noir/opponent-wary.jpg", label: "the dangerous one · style test" },
+    ],
+  },
+  {
+    slug: "wallpaper-controller",
+    name: "Wallpaper Controller",
+    year: "2026",
+    role: "solo · android",
+    blurb: "a fresh lock screen every time you wake your phone",
+    tagline:
+      "Pick a set of lock screen images, and every time the screen turns off the next one loads — so every wake is a new wallpaper. No accounts, no ads, no internet permission. 786 lines of Kotlin and one trick: the rotation lives inside a live wallpaper, so Android keeps it alive for free.",
+    stack: ["Kotlin", "Android Views", "WallpaperService", "TileService", "RecyclerView"],
+    tags: ["mobile"],
+    status: "shipping",
+    problem:
+      "Android happily varies your home wallpaper but has no built-in way to rotate the lock screen. The apps that fake it run foreground services with permanent notifications, beg for battery-optimization exemptions, and still get killed — or they demand network access and show ads for what is, at heart, a 'change picture' job.",
+    why:
+      "I wanted one small thing: a different wallpaper every time I wake my phone. Every existing option either died in the background or asked for permissions a wallpaper app has no business asking for. It's a weekend-sized problem — so I built the version that respects the phone.",
+    architecture:
+      "The whole app rides on one insight: Android keeps a live wallpaper's process alive because it has to draw your screen. So the home wallpaper is a minimal live-wallpaper engine drawing a static bitmap — and that engine registers a screen-off receiver. Screen turns off → the store picks the next image in your lock set → one WallpaperManager call sets it on the lock screen. By the time you look at your phone again, the new wallpaper is already there. A Quick Settings tile and a 'next now' button drive the same path by hand, and a small diagnostics log records every change.",
+    architectureMap: `        screen turns off
+               │
+               ▼
+┌───────────────────────────────┐
+│ live wallpaper engine         │
+│ draws the home image          │
+│ system keeps it alive         │
+└──────────────┬────────────────┘
+               ▼
+┌───────────────────────────────┐
+│ wallpaper store               │
+│ next image in the lock set    │
+└──────────────┬────────────────┘
+               ▼
+┌───────────────────────────────┐
+│ WallpaperManager · FLAG_LOCK  │
+│ new lock wallpaper is set     │
+└───────────────────────────────┘
+   ▲                      │
+   │ same path            ▼
+ QS tile · next now   diagnostics log`,
+    challenge:
+      "Surviving in the background without cheating. Android kills background apps by design, and the usual workarounds — a foreground service with a permanent notification, battery-exemption prompts, boot receivers — are exactly what makes these apps gross, and exactly what Play review flags. The live wallpaper is the one legal foothold: the system keeps it alive to draw the screen, and the rotation rides along at zero extra cost. Turn the live wallpaper off and rotation simply stops — nothing runs behind your back.",
+    challengeStats: [
+      { k: "total kotlin", v: "786 loc" },
+      { k: "permissions", v: "1" },
+      { k: "internet access", v: "none" },
+      { k: "background services", v: "0" },
+    ],
+    tradeoffs: [
+      "Rotation needs the live wallpaper active · turn it off and cycling stops. An honest failure mode — no zombie process trying to outsmart the OS.",
+      "The engine draws a static bitmap, not an animation · zero battery drama, but the home wallpaper can't do live effects. Wrong app for that.",
+      "Images are copied into private storage · costs duplicate bytes, but needs no storage permission, originals can be deleted freely, and uninstall wipes everything.",
+    ],
+    scale:
+      "Everything is on-device — there is nothing to scale except the image set. No backend, no analytics, no crash reporter phoning home. The Play data-safety form is one word: none.",
+    future:
+      "Get through Play review — the v1.6 release bundle, store listing, and privacy policy are done. After that, only what real users ask for: shuffle order and time-based rotation are the obvious candidates.",
+    futureMilestones: [
+      { state: "done", label: "lock rotation on screen-off · quick settings tile" },
+      { state: "done", label: "v1.6 release bundle · store listing · privacy policy" },
+      { state: "wip", label: "google play submission" },
+      { state: "planned", label: "shuffle + scheduled rotation · if users ask" },
+    ],
+    decisions: [
+      {
+        title: "The live wallpaper is the legal foothold",
+        body: "The system keeps a live wallpaper running because it draws your screen — so the screen-off receiver that advances the lock image lives inside that engine. No foreground service, no permanent notification, no battery-exemption begging. The one process Android promises not to kill is the one doing the work.",
+      },
+      {
+        title: "No internet permission, so privacy is provable",
+        body: "The app doesn't promise not to phone home — it can't. There is no INTERNET permission in the manifest, so 'no data leaves your device' is checkable by anyone who can read an APK, not a privacy-policy pinky swear.",
+      },
+      {
+        title: "Copy, don't reference",
+        body: "Picked images are copied into app-private storage. No media-library permission, no broken wallpapers when you clean your gallery, and uninstalling removes every byte the app ever touched.",
+      },
+    ],
+    outcome:
+      "Daily driver on my own phone — every wake is a fresh wallpaper, and the diagnostics log shows the cycle firing on every screen-off. v1.6 is built as a signed release bundle with the Play listing and privacy policy written; the submission itself is the last step.",
+    repo: "https://github.com/SamarS1ngh/wallpaper-controller",
+    shots: [
+      { src: "/shots/wallpaper-controller/home.png", label: "home · pick the home image + span toggle + set as live wallpaper" },
+      { src: "/shots/wallpaper-controller/lock-rotation.png", label: "lock rotation · the set, next-now, QS tile tip + diagnostics" },
+    ],
+  },
+  {
     slug: "eeo-modules",
     name: "EasyEnterpriseOS",
     year: "2025—",

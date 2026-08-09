@@ -226,6 +226,102 @@ export const projects: Project[] = [
     heroPoster: "/reels/nocap.jpg",
   },
   {
+    slug: "flowstate",
+    name: "flowstate",
+    year: "2026—",
+    role: "solo · android · on-device ML",
+    blurb: "a music app that listens to the music",
+    tagline: "Every streaming app picks your next song by watching what people click. None of them have heard the song. flowstate runs a small neural network on the phone that listens to the actual audio — so the queue matches how things sound, not what an algorithm thinks you'll tap.",
+    stack: ["React Native", "TypeScript", "Kotlin", "ExoPlayer", "MusiCNN", "SQLite", "OkHttp"],
+    tags: ["mobile", "ai"],
+    status: "active",
+    problem:
+      "\"Smart\" shuffle isn't smart, it's social. YouTube Music's improved recommendations and Spotify's Smart Shuffle both work the same way underneath — people who liked this also liked that, weighted by skips, trending, and whatever the platform is being paid to push. It has never heard a single one of these songs. So mid-gym-session it drops a ballad. Mid-focus-block it drops a party track. The songs are all mine. They just don't belong next to each other.",
+    why:
+      "This broke the three times I actually care about music: the gym, deep-focus work, and a room full of people. Each needs a *consistent* mood held for an hour — exactly the thing a click-based recommender can't promise, because it doesn't know what a song sounds like. I got tired of playing DJ with my thumb between sets, so I built the thing I wanted: an app that hears the music and keeps the room where I put it.",
+    architecture:
+      "Three parts. First, it pulls in my own library — my playlists, my liked songs — straight from my account. Second, a small music model listens to each track's real audio and turns it into a fingerprint of how that song *sounds*: its energy, texture, mood. Those fingerprints live in a tiny database on the phone. Third, when a song is playing, the app looks for the next one whose fingerprint sits closest to it — so the mood holds instead of lurching. A dial decides how close is close enough. The whole thing runs on the phone: no server picks anything, and it keeps working offline. Analysis of the library happens quietly in the background while the screen is off.",
+    architectureMap: `┌──────────────┐          ┌──────────────────────┐
+│  my own      │          │  on-device listener  │
+│  library     │─────────►│  hears each track    │
+│  1210 songs  │          │  → a "sound print"   │
+└──────────────┘          └──────────┬───────────┘
+                                     │ stored locally
+                    ┌────────────────┴────────────────┐
+                    ▼                                 ▼
+          ┌───────────────────┐            ┌────────────────────┐
+          │   mood chips      │            │  LOCK ◄────► DRIFT │
+          │ happy · chill     │            │  how far the queue │
+          │ aggressive · dance│            │  may wander from   │
+          │ acoustic · party  │            │  the current vibe  │
+          └─────────┬─────────┘            └─────────┬──────────┘
+                    └───────────────┬────────────────┘
+                                    ▼
+                        ┌───────────────────────┐
+                        │      next song        │
+                        │  chosen by SOUND —    │
+                        │  never by what other  │
+                        │  people clicked on    │
+                        └───────────────────────┘`,
+    challenge:
+      "Making it keep working when the phone is in your pocket. Skipping from the lock-screen notification worked about three times, then died — and four plausible fixes later it still died. The real answer only showed up when I stopped reading my own code and measured on the device: a plain network request from JavaScript never comes back while the app is backgrounded. Not slow, not an error — it just never returns. Meanwhile the audio player streamed fine, because that part is native. Swapping to a different HTTP library would have changed nothing; on React Native they all funnel into the same place. I ended up writing the networking layer in Kotlin so it runs on threads the system doesn't park. That's the same reason Spotify works in your pocket — it isn't privileged, it just doesn't ask JavaScript to do the fetching.",
+    challengeStats: [
+      { k: "songs analyzed", v: "770 / 770" },
+      { k: "background skips", v: "20 / 20" },
+      { k: "before the fix", v: "~3, then stall" },
+      { k: "native modules written", v: "3" },
+    ],
+    tradeoffs: [
+      "On-device model over a cloud API · the phone does the listening, so it costs nothing per song, works offline, and no audio ever leaves the device. Cost: analyzing a big library takes real time and battery, which is why it runs as a background job with battery and Wi-Fi guards rather than blocking the UI.",
+      "React Native for the app, Kotlin for anything touching the OS · the UI moved fast, but every hard bug in this project lived exactly on that seam. Honest read: for a solo Android-only build, straight Kotlin would probably have been the cleaner call — I'd still take the trade for what the seam taught me.",
+      "An unofficial API for the library · it gets me my real playlists and real liked songs, which is the whole point. Cost: it's reverse-engineered, so it can break, and some catalog entries are unplayable and need a search fallback to find a working copy of the same recording.",
+      "Stop on a failed song instead of auto-skipping · the old behaviour churned through five tracks and errored anyway. Stopping is louder but honest — a broken song is the listener's to skip, not the app's to hide.",
+    ],
+    scale:
+      "Built for one library, not a million users. Everything scales with song count, not traffic: a fingerprint per track in a local database, queue picks that stay instant across a 1200-song library, and a background analyzer that chews through the backlog once and then only sees new songs. No server, no accounts, no per-user cost — the ceiling is the phone's storage, and it's nowhere near it.",
+    scaleStats: [
+      { k: "library size", v: "1,210 songs" },
+      { k: "analysis", v: "one-time, then incremental" },
+      { k: "server cost", v: "$0" },
+      { k: "unit tests", v: "232" },
+    ],
+    future:
+      "Smarter mood regions learned from my own thumbs instead of fixed presets. A proper 'build me an hour of this' session mode for gym and focus blocks. Crossfade and tempo-aware transitions so a party set never has a dead half-second. And wider device testing — Android manufacturers all treat background work differently, and right now this is tuned on one phone.",
+    futureMilestones: [
+      { state: "done", label: "vibe engine · queues built from audio, on-device" },
+      { state: "done", label: "background analysis · runs with the screen off" },
+      { state: "done", label: "lock-screen control · fixed via native networking" },
+      { state: "planned", label: "session mode · hold a mood for a set length" },
+      { state: "planned", label: "tempo-aware transitions + crossfade" },
+    ],
+    decisions: [
+      {
+        title: "Listen to the audio, not the clicks",
+        body: "The model reads the waveform, not the genre tag or the play count. That's the whole reason a mellow track by a heavy band lands next to other mellow tracks — the fingerprint describes how it *sounds*, so mood holds across artists and genres that a tag-based system would never put together.",
+      },
+      {
+        title: "A dial, not a switch",
+        body: "Lock ◄──► Drift decides how tightly the queue clings to the current vibe. Locked, it's one sustained mood — that's the gym and focus setting. Drifting, it wanders on purpose and surprises me. Same library, completely different session, one control.",
+      },
+      {
+        title: "Prove the model's input before trusting its output",
+        body: "Audio becomes a mel-spectrogram before the network ever sees it, and getting that conversion subtly wrong breaks everything silently — no crash, just quietly wrong results. I rewrote the decoder in Kotlin for speed, then wrote a parity test asserting it matches the reference implementation. \"I ran a model\" means nothing if you're feeding it the wrong numbers.",
+      },
+      {
+        title: "Anything that must work while locked lives in native",
+        body: "The next track's stream is handed to the player in advance, so a song ends and the next begins with no JavaScript involved at all. Same principle behind the Kotlin networking layer. JavaScript runs ahead of time; it's never on the critical path at the moment the phone is asleep.",
+      },
+    ],
+    outcome:
+      "Daily driver. 1,210 songs in, 770 liked tracks fully analyzed, and vibe shuffle is how I actually listen — gym sets hold their energy, focus blocks stay flat, and party mode stops swerving. Lock-screen and notification controls work backgrounded (20/20 verified on-device, against ~3 before the native rewrite), plus offline downloads, real likes that write back to my account, and a separate radio mode for when I do want the endless algorithmic feed. Honest status: alpha, one device, one user — built as a personal and educational project on an unofficial API, not a product.",
+    repo: "https://github.com/SamarS1ngh",
+    shots: [
+      { src: "/shots/flowstate/library.png", label: "library · playlists pulled from my own account" },
+      { src: "/shots/flowstate/playlist-vibe-shuffle.png", label: "playlist · 770 songs, 770 analyzed — vibe shuffle or radio" },
+      { src: "/shots/flowstate/player-mood-chips.png", label: "player · mood chips, drift dial, and a doesn't-fit signal" },
+    ],
+  },
+  {
     slug: "rent-roll",
     name: "RentRoll",
     year: "2026—",

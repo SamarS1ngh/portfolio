@@ -135,7 +135,7 @@ export default function Page({ params }: { params: { slug: string } }) {
       {p.liveUrl && !SLUGS_WITH_DEMO.has(p.slug) && (
         <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
           <WideSection index="00" label="field log · live demo + screens">
-            <LiveShowcase liveUrl={p.liveUrl} shots={p.shots} name={p.name} />
+            <LiveShowcase liveUrl={p.liveUrl} shots={p.shots} name={p.name} cta={p.liveCta} />
           </WideSection>
         </section>
       )}
@@ -759,7 +759,7 @@ function ClientDossier({ project: p }: { project: Project }) {
           {p.role.replace(/^freelance\s+/, "")}
         </span>
         <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.3em] text-bone/50">
-          anonymized · client identity protected
+          {p.client?.named ? "public client · live site" : "anonymized · client identity protected"}
         </span>
       </div>
 

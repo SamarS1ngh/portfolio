@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 type Shot = { src: string; label: string };
 
+// overrides for the live CTA banner — defaults fit an app with a public /demo workspace
+export type LiveCta = { badge?: string; title?: string; body?: string; button?: string; path?: string };
+
 function hostOf(url: string) {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -131,13 +134,15 @@ export function LiveShowcase({
   liveUrl,
   shots,
   name,
+  cta,
 }: {
   liveUrl: string;
   shots?: Shot[];
   name: string;
+  cta?: LiveCta;
 }) {
   const base = liveUrl.endsWith("/") ? liveUrl : liveUrl + "/";
-  const demoUrl = base + "demo";
+  const demoUrl = base + (cta?.path ?? "demo");
   const host = hostOf(liveUrl);
 
   return (
@@ -153,17 +158,17 @@ export function LiveShowcase({
           <div className="min-w-0 flex-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/60 bg-emerald-400/20 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-emerald-100">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399] animate-pulse" />
-              live · public demo
+              {cta?.badge ?? "live · public demo"}
             </span>
             <h3
               className="mt-3 font-light text-2xl uppercase leading-tight tracking-tight text-bone md:text-3xl"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              Try the real app — no login
+              {cta?.title ?? "Try the real app — no login"}
             </h3>
             <p className="mt-2 max-w-xl font-sans text-[15px] leading-relaxed text-bone md:text-base">
-              A real, populated workspace with live data. No sign-up, no password — just
-              click in and look around the actual product.
+              {cta?.body ??
+                "A real, populated workspace with live data. No sign-up, no password — just click in and look around the actual product."}
             </p>
           </div>
           <a
@@ -172,7 +177,7 @@ export function LiveShowcase({
             rel="noreferrer"
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-emerald-400 px-7 py-3.5 font-mono text-[12px] font-bold uppercase tracking-[0.28em] text-[#04140d] shadow-[0_8px_30px_-6px_rgba(52,211,153,0.8)] transition hover:bg-emerald-300"
           >
-            ▸ open live demo
+            ▸ {cta?.button ?? "open live demo"}
             <span aria-hidden>↗</span>
           </a>
         </div>

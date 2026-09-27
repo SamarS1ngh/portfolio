@@ -32,6 +32,8 @@ export type Project = {
     region?: string;
     teamSize?: string;
     engagement?: string;
+    // client is named publicly (live site linked) — dossier drops the "anonymized" stamp
+    named?: boolean;
   };
   testimonials?: {
     quote: string;
@@ -42,6 +44,8 @@ export type Project = {
   }[];
   heroMetrics?: { k: string; v: string; accent?: "amber" | "emerald" | "violet" | "sky" | "rose" }[];
   liveUrl?: string;
+  // overrides for the live CTA banner (see LiveShowcase) — omit for apps with a public /demo
+  liveCta?: { badge?: string; title?: string; body?: string; button?: string; path?: string };
   playstoreUrl?: string;
   heroVideo?: string;
   heroPoster?: string;
@@ -663,6 +667,118 @@ export const projects: Project[] = [
     liveUrl: "https://www.easyenterpriseos.com/",
     heroVideo: "/reels/eeo.mp4",
     heroPoster: "/reels/eeo.jpg",
+  },
+  {
+    slug: "dr-magnet",
+    name: "Dr. Magnet",
+    year: "2026",
+    role: "freelance contract · solo full-stack",
+    blurb: "patient-acquisition site for a healthcare marketing agency · client build",
+    tagline: "A high-converting landing site for a healthcare marketing agency that runs Meta + Google ads for doctors, clinics and hospitals. Every visitor is paid ad traffic — so the page is built to load fast on a phone, prove results, and turn a doctor into a qualified lead.",
+    stack: ["TanStack Start", "React 19", "Vite", "Tailwind v4", "shadcn/ui", "Zod", "Google Sheets API", "Meta Pixel + Conversions API"],
+    tags: ["web"],
+    status: "shipped",
+    problem:
+      "The agency sells one thing: more patients for doctors. Their own website had to practice what they preach. Traffic arrives from paid Meta and Google ads, mostly on mobile, and every rupee spent on a click that bounces is wasted. They needed a site that looks premium (not a generic hospital template), shows real campaign proof, and hands the sales team leads that are already qualified.",
+    why:
+      "Doctors are skeptical buyers. They've been burned by agencies that promise leads and deliver junk. So the site leads with proof — real ad-dashboard screenshots, real WhatsApp messages from clinics, real client logos — and asks for enough detail up front that a sales call starts with context instead of cold questions.",
+    architecture:
+      "One server-rendered React app. The home page is a long sales page — hero with a video sales letter, the Magnet Framework (M-A-G-N-E-T steps), a founder section, dashboard carousel, chat-screenshot testimonials, client logos, FAQ. Every call-to-action funnels to a /book page with a 10-field qualifying form. On submit, a typed server function validates the lead and appends it as a row in the agency's Google Sheet, so the sales team works from a spreadsheet they already know. The same submit fires a 'Lead' event to Meta twice — once from the browser pixel and once from the server — tagged with one shared ID so Meta counts it once.",
+    architectureMap: `┌───────────────┐   meta / google ad click
+│ doctor · phone│ ─────────────────────────┐
+└───────┬───────┘                          ▼
+        │                         ┌──────────────────┐
+        │  SSR sales page         │  home · VSL,     │
+        └────────────────────────►│  proof, framework│
+                                  └────────┬─────────┘
+                                           │ every CTA
+                                           ▼
+                                  ┌──────────────────┐
+                                  │ /book · 10-field │
+                                  │ qualifying form  │
+                                  └────────┬─────────┘
+                    ┌──────────────────────┼────────────────────┐
+                    ▼                      ▼                    ▼
+           ┌────────────────┐   ┌───────────────────┐  ┌────────────────┐
+           │ server fn · zod│   │ browser pixel     │  │ server CAPI    │
+           │ → google sheet │   │ Lead · event_id X │  │ Lead · event_id│
+           │ (sales team)   │   └─────────┬─────────┘  │ X · hashed ph  │
+           └────────────────┘             └──── meta dedupes ─┘`,
+    challenge:
+      "Page speed on paid traffic. The first build shipped 36 elements — including the hero headline and the video poster — at opacity 0, waiting for JavaScript to fade them in, and every video testimonial eagerly loaded a full Vimeo player. On a mid-range phone the headline showed up late and the page weighed ~4MB. Fixed it by rendering everything visible on the server and only animating below-the-fold sections after hydration, loading the video poster (the biggest paint) eagerly with high priority, and swapping each Vimeo embed for a thumbnail that only mounts the player on tap.",
+    challengeStats: [
+      { k: "mobile LCP", v: "4.9s → ~3s" },
+      { k: "page weight", v: "4MB → 1MB" },
+      { k: "hidden-on-load elements", v: "36 → 0 above fold" },
+      { k: "vimeo JS per embed", v: "~500KB → on tap" },
+    ],
+    tradeoffs: [
+      "Google Sheets as the lead store over a database + admin panel · zero new tools for the sales team, no dashboard to build or maintain. Cost: no dedupe or lead status inside the site — the sheet is the CRM.",
+      "Server-side Conversions API on top of the browser pixel · more moving parts, but ad blockers and iOS privacy drop a big share of pixel events. Shared event IDs keep Meta from double-counting.",
+      "Long single sales page over a multi-page site · matches how paid traffic behaves (land, scroll, decide) and keeps every CTA one tap from /book.",
+      "Screenshots of real dashboards and chats over polished case-study copy · uglier than a designed stat card, but far more believable to a skeptical doctor.",
+    ],
+    scale:
+      "It's a marketing site, so scale here means ad spend, not concurrency — the thing that breaks is conversion rate, not servers. Pages are server-rendered and light enough for mid-range Android on mobile data. Lead writes are one append per submit to Google Sheets; Meta events go out fire-and-forget so a slow Graph API never blocks the thank-you screen.",
+    future:
+      "Dedicated case-study pages per speciality (dermatology, IVF, aesthetics) for ad-group-specific landing. Auto WhatsApp follow-up the moment a lead lands in the sheet. Feed booked-appointment events back to Meta so campaigns optimise for patients who actually show up, not just form fills.",
+    futureMilestones: [
+      { state: "done", label: "qualifying form → google sheet" },
+      { state: "done", label: "pixel + conversions API · deduped" },
+      { state: "done", label: "mobile perf pass · LCP ~3s" },
+      { state: "planned", label: "per-speciality case-study pages" },
+      { state: "planned", label: "whatsapp auto follow-up on new lead" },
+      { state: "planned", label: "offline conversions · booked appointments → meta" },
+    ],
+    decisions: [
+      {
+        title: "Qualify before the call",
+        body: "The form asks for speciality, monthly revenue, marketing budget, timeline, biggest challenge and what they've tried. Ten fields is a lot — on purpose. Doctors who fill it are serious, and the sales team opens every call already knowing the clinic.",
+      },
+      {
+        title: "One event, two senders, one count",
+        body: "Each conversion gets a random event ID. The browser pixel sends it; a server function sends the same event to Meta's Conversions API with SHA-256 hashed phone and name (Indian numbers normalised to +91 first). Meta sees two copies with one ID and keeps one — better match rates without inflated numbers.",
+      },
+      {
+        title: "Visible on the server, animated after",
+        body: "Scroll-reveal animations used to hide content until JS loaded. Now the server ships it visible and only below-the-fold sections get hidden after hydration, then fade in on scroll. Same polish, no blank hero.",
+      },
+      {
+        title: "Mobile-first, sticky booking bar",
+        body: "Most visitors are on phones. A sticky bottom bar with a countdown and a Book Now button follows the scroll, and a full responsive audit fixed clipping, overflowing carousels and cut-off headings from small phones up to wide desktops.",
+      },
+    ],
+    outcome:
+      "Live at drmagnet.in as the landing page for the agency's paid Meta + Google campaigns. Leads land in the sales team's Google Sheet with full qualifying context, and conversions report back to Meta from both browser and server.",
+    client: {
+      industry: "Healthcare marketing agency",
+      region: "India",
+      teamSize: "solo build",
+      engagement: "~1 month · fixed scope",
+      named: true,
+    },
+    heroMetrics: [
+      { k: "mobile LCP", v: "~3s", accent: "emerald" },
+      { k: "page weight", v: "1MB", accent: "sky" },
+      { k: "qualifying fields / lead", v: "10", accent: "rose" },
+    ],
+    liveUrl: "https://www.drmagnet.in/",
+    liveCta: {
+      badge: "live · in production",
+      title: "Visit the live site",
+      body: "The real site, serving the agency's ad traffic right now. Scroll the sales page, then open the booking form.",
+      button: "open drmagnet.in",
+      path: "",
+    },
+    shots: [
+      { src: "/shots/dr-magnet/hero-vsl.png", label: "hero · headline + video sales letter" },
+      { src: "/shots/dr-magnet/magnet-framework.png", label: "the magnet framework · six-step method" },
+      { src: "/shots/dr-magnet/results-dashboards.png", label: "results · real google + meta ads dashboards" },
+      { src: "/shots/dr-magnet/client-chats.png", label: "testimonials · real clinic whatsapp chats" },
+      { src: "/shots/dr-magnet/client-logos-faq.png", label: "client logos + FAQ" },
+      { src: "/shots/dr-magnet/booking-form.png", label: "/book · 10-field qualifying form → google sheet" },
+      { src: "/shots/dr-magnet/mobile-hero.png", label: "mobile · sticky countdown + book-now bar" },
+    ],
   },
   {
     slug: "live-class",

@@ -55,6 +55,116 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "notchfy",
+    name: "Notchfy",
+    year: "2026—",
+    role: "solo · macOS · product + business",
+    blurb: "the MacBook notch, turned into a dashboard",
+    tagline: "The notch is a chunk of dead screen you look at all day. Notchfy turns it into a live control center — hover over it and 24 modules drop down: clipboard, file shelf, timers, Stripe revenue, Claude Code usage, now playing, and MacMate, an AI that answers how-do-I-do-this-on-a-Mac questions. A native Swift app I built, signed, and sell myself.",
+    stack: ["Swift", "SwiftUI", "AppKit", "Apple Foundation Models", "Sparkle", "Lemon Squeezy", "Vercel"],
+    tags: ["saas", "ai"],
+    status: "shipping",
+    problem:
+      "Half the things I check all day — the time, what's playing, how much a deploy cost, whether a sale came in, where that file I just downloaded went — each live in a different app. Every check is a context switch: Cmd-Tab, find the window, look, come back. Meanwhile every notched MacBook has a black strip at the top of the screen that does nothing at all.",
+    why:
+      "I wanted the glance without the switch: move the mouse up, see it, move away, it's gone. And I wanted to know what it takes to ship a real paid desktop product end to end — not just the app, but the signing, the licensing, the update channel, the store page, the refund policy. Notchfy is both.",
+    architecture:
+      "A borderless, transparent window sits exactly over the notch and stays on top of everything. A small core module (plain Swift, unit-tested) works out the notch's real size from the screen's safe-area insets — or draws a fake notch on Macs that don't have one — and a hover state machine decides when to open and close. Each feature is its own self-contained module behind a common descriptor, so modules can be toggled, reordered, and themed independently. Everything runs on the Mac: API keys live in the Keychain, data stays local, and the only network calls are the ones a user turns on. Around the app sits the business layer: a Lemon Squeezy license gate, Developer ID signing and Apple notarization, Sparkle for over-the-air updates, and a static marketing site on Vercel that hosts the update feed.",
+    architectureMap: `           mouse moves to the top of the screen
+                         │
+                         ▼
+          ┌──────────────────────────────┐
+          │  notch engine (core, tested) │
+          │  geometry · hover state      │
+          │  real notch or simulated     │
+          └──────────────┬───────────────┘
+                         │ expand
+                         ▼
+   ┌────────────────────────────────────────────────┐
+   │  floating panel · 24 modules · 6 themes        │
+   │  home · clipboard · shelf · captures · timers  │
+   │  revenue · analytics · claude usage · weather  │
+   │  now playing · ambience · MacMate AI · …       │
+   └───────┬──────────────────┬─────────────────────┘
+           │                  │
+   live activities      notification mirror
+   volume · brightness  other apps' alerts,
+   battery · bluetooth  shown in the notch
+
+   ── business layer ──────────────────────────────
+   license gate (Lemon Squeezy) · notarized build
+   Sparkle OTA updates · notchfy.com on Vercel`,
+    challenge:
+      "Making a window that has no business existing behave like part of the OS. The notch panel has no title bar, no safe area, and resizes itself constantly — and on macOS 26/27 that combination made SwiftUI and AppKit fight. SwiftUI kept re-calculating safe-area insets that didn't exist, AppKit kept re-running layout, and the app crashed with 'more Update Constraints passes than there are views'. The fix was to stop letting the frameworks guess: pin the insets to zero and drive the window size by hand. Drag-and-drop had the same shape of bug — dragging a file over the notch expands it, the expansion moves the view under the cursor, which fires more enter/exit events, which expands it again. One expand per drag session broke the loop. The theme across all of it: a notch app lives in the gaps the OS was never designed for, so every assumption the frameworks make has to be checked.",
+    challengeStats: [
+      { k: "modules", v: "24" },
+      { k: "themes", v: "6" },
+      { k: "commits", v: "460+" },
+      { k: "first commit → launch", v: "~2.5 weeks" },
+    ],
+    tradeoffs: [
+      "Direct sale over the Mac App Store · the App Store sandbox would kill the clipboard history, notification mirroring, and system stats — the features that make it worth paying for. Cost: I own everything Apple would have handled — signing, notarization, licensing, updates, and payments.",
+      "One-time price over a subscription · $5 for the first 100 buyers, then $12, once. A notch utility doesn't feel like a monthly bill, and 'no subscription' is a selling point. Cost: no recurring revenue; growth has to come from new buyers.",
+      "Private macOS APIs where public ones don't exist · now-playing info, display brightness, and the Notification Center database have no public API. Using them makes the features possible. Cost: they're undocumented and can break on any macOS update, so each is built best-effort and fails quietly.",
+      "On-device AI first, your own key second · MacMate uses Apple's on-device model when the Mac supports it — free and private. Otherwise it uses the buyer's own Claude, OpenAI, Gemini, or Grok key. Cost: I can't promise one answer quality, but I never pay per question and never see a user's data.",
+    ],
+    scale:
+      "Scale here is per-Mac, not per-server — the work is keeping a background app light enough to forget about. The Claude Code usage reader caches each session log by path, modified time, and size, so it only re-reads the files that changed. Volume and brightness changes are coalesced so dragging a slider gives one banner, not fifty. Polling runs at low priority off the main thread, and the app opts out of App Nap so its timers stay on time while it sits in the background. There's no backend: the only server is a static site.",
+    scaleStats: [
+      { k: "backend", v: "none" },
+      { k: "telemetry", v: "zero" },
+      { k: "Swift", v: "~14.7k lines" },
+      { k: "macOS", v: "14+ · Apple silicon + Intel" },
+    ],
+    future:
+      "First paying customers, then let their feedback pick the next modules. Wider testing across Mac models and external monitors, where notch geometry gets messy. And keeping the private-API features alive through each new macOS release.",
+    futureMilestones: [
+      { state: "done", label: "notch engine · real + simulated notch, hover state machine" },
+      { state: "done", label: "24 modules · 6 themes · MacMate AI" },
+      { state: "done", label: "license gate · notarized build · Sparkle OTA updates" },
+      { state: "done", label: "notchfy.com live · Lemon Squeezy checkout" },
+      { state: "wip", label: "launch · first 100 buyers at $5" },
+      { state: "planned", label: "next modules from customer feedback" },
+    ],
+    decisions: [
+      {
+        title: "Test the engine without the UI",
+        body: "Notch geometry and hover logic live in a separate Swift package with no AppKit in it: given screen measurements, where is the notch; given mouse events, should it be open. That's the part every other feature depends on, so it's the part with unit tests — and the app's UI layer just feeds it real mouse movement.",
+      },
+      {
+        title: "The license works offline",
+        body: "A buyer enters their Lemon Squeezy key once and it's bound to that Mac. After that the app trusts the stored key and re-checks it online in the background — and only locks itself if the server actually answers 'invalid'. A flaky connection never locks out someone who paid. No store secret ships in the app; the license endpoints only need the key itself.",
+      },
+      {
+        title: "Mirror notifications without stealing focus",
+        body: "Other apps' notifications are read from macOS's own notification database and shown in the notch — except when you're already in the app that sent them. Browsers are the exception to the exception: a WhatsApp Web alert comes from a website, not from Chrome, so it still shows while Chrome is in front.",
+      },
+      {
+        title: "Ship the business, not just the binary",
+        body: "Paid desktop software needs more than code: a Developer ID certificate, Apple notarization, signed over-the-air updates so buyers aren't stuck on v1, a license system, a checkout, privacy and refund pages. Building all of it myself was the point — the release script goes build → notarize → staple → sign the update → publish the feed in one command.",
+      },
+    ],
+    outcome:
+      "Live at notchfy.com with Lemon Squeezy checkout: $5 for the first 100 buyers, then $12, one-time. Version 1.1 ships signed, notarized, licensed, and updates itself over the air. Built solo — app, engine, 24 modules, licensing, release pipeline, and the marketing site — in about two and a half weeks from first commit to launch. Honest status: just launched, no sales numbers to show yet.",
+    liveUrl: "https://www.notchfy.com/",
+    liveCta: {
+      badge: "live · on sale",
+      title: "Visit notchfy.com",
+      body: "The real store page — every module, every theme, and the checkout. One-time purchase, no subscription.",
+      button: "open notchfy.com",
+    },
+    shots: [
+      { src: "/shots/notchfy/home.png", label: "home · system rings, launcher, clock, now playing, battery" },
+      { src: "/shots/notchfy/macmate.png", label: "MacMate · in-notch AI that answers Mac how-to questions" },
+      { src: "/shots/notchfy/claude-usage.png", label: "Claude Code usage · streak, tokens, sessions, heatmap" },
+      { src: "/shots/notchfy/revenue.png", label: "revenue · Stripe sales, sparkline, recent orders (sample data)" },
+      { src: "/shots/notchfy/now-playing.png", label: "now playing · track, artwork, controls" },
+      { src: "/shots/notchfy/shelf.png", label: "shelf · drop files on the notch, drag them back out" },
+      { src: "/shots/notchfy/captures.png", label: "captures · latest screenshots, one click to copy or open" },
+      { src: "/shots/notchfy/theme-tech-hud.png", label: "Tech HUD theme · one of 6" },
+    ],
+  },
+  {
     slug: "jarvis",
     name: "Jarvis",
     year: "2025—",

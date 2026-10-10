@@ -9,7 +9,7 @@ export function Board({ project: p }: { project: Project }) {
   const personal = !p.client;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
       {/* loadout strip */}
       <HudPanel index="01" label="loadout · stack + spec" className="md:col-span-2 lg:col-span-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -32,12 +32,12 @@ export function Board({ project: p }: { project: Project }) {
         label="the problem"
         headline={c.problem}
         detail={p.problem}
-        className={personal ? "md:col-span-2 lg:col-span-3" : "md:col-span-2 lg:col-span-4"}
+        className={personal ? "md:col-span-2 lg:col-span-2" : "md:col-span-2 lg:col-span-4"}
       />
       {personal && c.why && (
         <HudPanel index="03" label="why i built it" headline={c.why} detail={p.why} className="lg:col-span-2" />
       )}
-      <HudPanel index="04" label="signal" className={personal ? "lg:col-span-1" : "md:col-span-2 lg:col-span-2"}>
+      <HudPanel index="04" label="signal" className={"lg:col-span-2" + (personal ? "" : " md:col-span-2")}>
         <StatusGauge status={p.status} />
         <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-300">● {p.status}</div>
       </HudPanel>

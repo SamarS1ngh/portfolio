@@ -14,15 +14,17 @@ export function CountUp({ value }: { value: string }) {
 
   useEffect(() => {
     if (phase !== "shown" || !Number.isFinite(target) || target === 0) return;
-    const start = performance.now();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let start = 0;
     let raf = 0;
     const tick = (t: number) => {
+      if (!start) start = t;
       const k = Math.min(1, (t - start) / 800);
       setN(target * (1 - Math.pow(1 - k, 3)));
       if (k < 1) raf = requestAnimationFrame(tick);
       else setN(null);
     };
-    setN(0);
+    // the first frame sets 0, so a page that never paints still shows the real value
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [phase, target]);

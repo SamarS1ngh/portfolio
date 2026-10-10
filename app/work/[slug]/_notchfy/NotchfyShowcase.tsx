@@ -10,44 +10,44 @@ type Moment = { key: string; title: string; body: string; shot: string; note?: s
 const MOMENTS: Moment[] = [
   {
     key: "home",
-    title: "Glance at everything",
+    title: "Everything at a glance",
     body: "CPU, memory, battery, the time, what's playing, the weather. One hover instead of five apps.",
     shot: "/shots/notchfy/home.png",
   },
   {
     key: "macmate",
-    title: "Ask how to do a Mac thing",
+    title: "Mac help, on demand",
     body: "MacMate answers Mac how-to questions using Apple's on-device model, or your own Claude, OpenAI, Gemini or Grok key.",
     shot: "/shots/notchfy/macmate.png",
   },
   {
     key: "claude",
-    title: "Track your Claude Code usage",
+    title: "Claude Code usage",
     body: "Tokens today, streak and a weekly heatmap, read from Claude Code's local logs. No key needed.",
     shot: "/shots/notchfy/claude-usage.png",
   },
   {
     key: "revenue",
-    title: "See sales land",
+    title: "Live sales from Stripe",
     body: "With a read-only Stripe key, each sale flashes on the notch. Hover for totals, a chart and recent orders.",
     shot: "/shots/notchfy/revenue.png",
     note: "sample data",
   },
   {
     key: "music",
-    title: "Control music",
+    title: "Music controls",
     body: "Skip, pause and scrub whatever's playing without leaving the app in front.",
     shot: "/shots/notchfy/now-playing.png",
   },
   {
     key: "shelf",
-    title: "Park files on a shelf",
+    title: "File shelf",
     body: "Drag a file onto the notch, switch apps, then drag it back out where it needs to go.",
     shot: "/shots/notchfy/shelf.png",
   },
   {
     key: "captures",
-    title: "Grab your last screenshot",
+    title: "Recent screenshots",
     body: "New screenshots show up in the notch. Copy one into a chat or open it in one click.",
     shot: "/shots/notchfy/captures.png",
   },
@@ -204,37 +204,64 @@ export function NotchfyShowcase() {
           you never left the app you were in. Macs without a notch get a simulated one.
         </p>
 
-        <div className="mt-7 font-mono text-[10px] uppercase tracking-[0.3em] text-bone/45">▸ what you use it for</div>
-        <ul className="mt-3 border-t border-bone/10">
+        <div className="mt-8 flex items-baseline justify-between gap-3">
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300/80">▸ use cases</div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone/45">
+            <span className="hidden lg:inline">select one to preview →</span>
+            <span className="lg:hidden">tap one to preview ↓</span>
+          </div>
+        </div>
+        <ul className="mt-3 space-y-2" role="tablist" aria-label="Notchfy use cases">
           {MOMENTS.map((m, i) => {
             const on = active === m.key;
             return (
-              <li key={m.key} className="border-b border-bone/10">
+              <li key={m.key}>
                 <button
+                  role="tab"
+                  aria-selected={on}
                   onClick={() => show(m.key, m.shot)}
-                  className={`flex w-full items-baseline gap-3 py-2.5 text-left transition-colors ${
-                    on ? "text-bone" : "text-bone/55 hover:text-bone/85"
+                  className={`group w-full rounded-lg border text-left transition-all duration-200 ${
+                    on
+                      ? "border-amber-300/60 bg-amber-300/[0.08] shadow-[0_0_24px_-10px_rgba(252,211,77,0.6)]"
+                      : "border-bone/10 bg-white/[0.02] hover:border-bone/30 hover:bg-white/[0.05]"
                   }`}
                 >
-                  <span className={`font-mono text-[10px] ${on ? "text-amber-300" : "text-bone/35"}`}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="font-sans text-[15px]">{m.title}</span>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <span className={`font-mono text-[10px] ${on ? "text-amber-300" : "text-bone/40"}`}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className={`flex-1 font-sans text-[15px] ${on ? "text-bone" : "text-bone/75 group-hover:text-bone"}`}>
+                      {m.title}
+                    </span>
+                    <span
+                      aria-hidden
+                      className={`font-mono text-[13px] transition-transform duration-200 ${
+                        on ? "text-amber-300" : "text-bone/35 group-hover:translate-x-0.5 group-hover:text-bone/70"
+                      }`}
+                    >
+                      {on ? "●" : "→"}
+                    </span>
+                  </div>
+                  {on && (
+                    <p className="px-4 pb-3.5 pl-[42px] font-sans text-[13.5px] leading-relaxed text-bone/65">
+                      {m.body}
+                      {m.note && (
+                        <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.25em] text-bone/40">
+                          ({m.note})
+                        </span>
+                      )}
+                    </p>
+                  )}
                 </button>
-                {on && (
-                  <p className="-mt-1 pb-3 pl-7 font-sans text-[13.5px] leading-relaxed text-bone/60">
-                    {m.body}
-                    {m.note && (
-                      <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.25em] text-bone/40">
-                        ({m.note})
-                      </span>
-                    )}
-                  </p>
-                )}
               </li>
             );
           })}
         </ul>
+        <p className="mt-4 font-sans text-[13px] leading-relaxed text-bone/50">
+          These are 7 of the 24 modules. The rest include timers, calendar, clipboard history, notes, weather,
+          ambient sounds, web analytics, downloads, a file converter, unit conversions and an emoji picker, plus
+          live activities for volume, brightness and battery.
+        </p>
       </div>
 
       {/* right — the stage */}

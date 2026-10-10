@@ -51,6 +51,18 @@ export type Project = {
   heroPoster?: string;
   // real product screenshots — rendered as a gallery on the brief page
   shots?: { src: string; label: string }[];
+  // hand-written short copy for the HUD board — missing keys fall back to the first sentence
+  brief?: {
+    problem?: string;
+    why?: string;
+    architecture?: string;
+    challenge?: string;
+    scale?: string;
+    future?: string;
+    outcome?: string;
+    tradeoffs?: { gain: string; cost?: string }[];
+    decisions?: string[];
+  };
 };
 
 export const projects: Project[] = [

@@ -135,8 +135,11 @@ export default function Page({ params }: { params: { slug: string } }) {
       {/* Notchfy — product explainer: the notch in use, scene by scene */}
       {p.slug === "notchfy" && (
         <section className="relative z-10 mx-auto w-full max-w-[1400px] px-4 py-12 md:px-8 md:py-16">
-          <WideSection index="00" label="field log · what it is + how it's used">
-            <NotchfyShowcase />
+          <WideSection index="00" label="field log · live site + how it's used">
+            <div className="space-y-12">
+              <LiveShowcase liveUrl={p.liveUrl ?? ""} name={p.name} cta={p.liveCta} />
+              <NotchfyShowcase />
+            </div>
           </WideSection>
         </section>
       )}

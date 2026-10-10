@@ -147,6 +147,13 @@ export const projects: Project[] = [
     outcome:
       "Live at notchfy.com with Lemon Squeezy checkout: $5 for the first 100 buyers, then $12, one-time. Version 1.1 ships signed, notarized, licensed, and updates itself over the air. Built solo — app, engine, 24 modules, licensing, release pipeline, and the marketing site — in about two and a half weeks from first commit to launch. Honest status: just launched, no sales numbers to show yet.",
     liveUrl: "https://www.notchfy.com/",
+    liveCta: {
+      badge: "live · on sale",
+      title: "Visit notchfy.com",
+      body: "The real store page: every module, every theme, and the checkout. $5 for the first 100 buyers, then $12. One-time, no subscription.",
+      button: "open notchfy.com",
+      path: "",
+    },
   },
   {
     slug: "jarvis",

@@ -5,6 +5,7 @@ import { regions } from "@/components/world/regions";
 import { HeroReel } from "./_hero/HeroReel";
 import { ProjectDemoSlot } from "./_demos/ProjectDemoSlot";
 import { LiveShowcase, ShotGallery } from "./LiveShowcase";
+import { NotchfyShowcase } from "./_notchfy/NotchfyShowcase";
 
 const SLUGS_WITH_DEMO = new Set(["jarvis", "nocap", "eeo-modules"]);
 
@@ -131,8 +132,17 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
       </section>
 
+      {/* Notchfy — product explainer: the notch in use, scene by scene */}
+      {p.slug === "notchfy" && (
+        <section className="relative z-10 mx-auto w-full max-w-[1400px] px-4 py-12 md:px-8 md:py-16">
+          <WideSection index="00" label="field log · what it is + how it's used">
+            <NotchfyShowcase />
+          </WideSection>
+        </section>
+      )}
+
       {/* Screens — live embed + real product captures, when present */}
-      {p.liveUrl && !SLUGS_WITH_DEMO.has(p.slug) && (
+      {p.liveUrl && !SLUGS_WITH_DEMO.has(p.slug) && p.slug !== "notchfy" && (
         <section className="relative z-10 mx-auto w-full max-w-[1720px] px-4 py-12 md:px-8 md:py-16">
           <WideSection index="00" label="field log · live demo + screens">
             <LiveShowcase liveUrl={p.liveUrl} shots={p.shots} name={p.name} cta={p.liveCta} />

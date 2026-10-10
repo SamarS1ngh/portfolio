@@ -147,22 +147,6 @@ export const projects: Project[] = [
     outcome:
       "Live at notchfy.com with Lemon Squeezy checkout: $5 for the first 100 buyers, then $12, one-time. Version 1.1 ships signed, notarized, licensed, and updates itself over the air. Built solo — app, engine, 24 modules, licensing, release pipeline, and the marketing site — in about two and a half weeks from first commit to launch. Honest status: just launched, no sales numbers to show yet.",
     liveUrl: "https://www.notchfy.com/",
-    liveCta: {
-      badge: "live · on sale",
-      title: "Visit notchfy.com",
-      body: "The real store page — every module, every theme, and the checkout. One-time purchase, no subscription.",
-      button: "open notchfy.com",
-    },
-    shots: [
-      { src: "/shots/notchfy/home.png", label: "home · system rings, launcher, clock, now playing, battery" },
-      { src: "/shots/notchfy/macmate.png", label: "MacMate · in-notch AI that answers Mac how-to questions" },
-      { src: "/shots/notchfy/claude-usage.png", label: "Claude Code usage · streak, tokens, sessions, heatmap" },
-      { src: "/shots/notchfy/revenue.png", label: "revenue · Stripe sales, sparkline, recent orders (sample data)" },
-      { src: "/shots/notchfy/now-playing.png", label: "now playing · track, artwork, controls" },
-      { src: "/shots/notchfy/shelf.png", label: "shelf · drop files on the notch, drag them back out" },
-      { src: "/shots/notchfy/captures.png", label: "captures · latest screenshots, one click to copy or open" },
-      { src: "/shots/notchfy/theme-tech-hud.png", label: "Tech HUD theme · one of 6" },
-    ],
   },
   {
     slug: "jarvis",

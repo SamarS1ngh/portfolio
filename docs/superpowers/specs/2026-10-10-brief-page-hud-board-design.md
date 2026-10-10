@@ -58,7 +58,7 @@ Replaces sections §01–§10 (problem, why, stack, architecture, challenge, tra
 
 ## 4. Motion
 
-- One shared `IntersectionObserver` (`useReveal`) marks a panel revealed the first time ≥25% is visible.
+- A shared `useReveal` hook (one observer per panel, disconnected after first hit) marks a panel revealed the first time ≥25% is visible. Server HTML renders visible; the hidden state is applied only after mount.
 - On reveal: brackets draw in, stat numbers count up (numeric part only; non-numeric values just fade), headline types in fast (~600ms total).
 - After reveal: static. No ambient loops.
 - `prefers-reduced-motion: reduce` → everything renders in its final state immediately.
@@ -92,7 +92,7 @@ New folder `app/work/[slug]/_board/`:
 - `HudPanel.tsx` — client; shell + reveal animation.
 - `Decrypt.tsx` — client; expand/collapse toggle.
 - `useReveal.ts` — shared observer hook.
-- `parts.tsx` — StatTiles, SpecSheet, StatusGauge, MilestoneTrack, moved out of `page.tsx`.
+- `parts.tsx` — StatTiles, StatusGauge, MilestoneTrack, CountUp (StatTiles/StatusGauge moved out of `page.tsx`; the spec sheet folds into the loadout strip as year/role).
 - `brief.ts` — `shortCopy(project)` resolves `brief` with fallbacks (pure, unit-testable).
 
 `page.tsx` shrinks to: hero/header → §00 media (unchanged) → `<Board project={p} />` → nav + footer links.

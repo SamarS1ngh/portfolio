@@ -158,6 +158,26 @@ export const projects: Project[] = [
     ],
     outcome:
       "Live at notchfy.com with Lemon Squeezy checkout: $5 for the first 100 buyers, then $12, one-time. Version 1.1 ships signed, notarized, licensed, and updates itself over the air. Built solo — app, engine, 24 modules, licensing, release pipeline, and the marketing site — in about two and a half weeks from first commit to launch. Honest status: just launched, no sales numbers to show yet.",
+    brief: {
+      problem: "Every quick check (time, music, a sale, a file) means switching apps. The notch just sits there.",
+      why: "I wanted the glance without the switch, and to ship a paid desktop app end to end.",
+      architecture: "A floating window over the notch, a tested geometry core, and 24 self-contained modules.",
+      challenge: "On macOS 26/27, SwiftUI and AppKit looped on layout until the app crashed.",
+      scale: "No backend. The real work is staying light enough to forget it's running.",
+      outcome: "Live at notchfy.com: signed, notarized, licensed and self-updating.",
+      tradeoffs: [
+        { gain: "Sold direct, not on the App Store", cost: "I own signing, licensing, updates and payments" },
+        { gain: "One-time price, no subscription", cost: "No recurring revenue" },
+        { gain: "Private macOS APIs unlock key features", cost: "Any macOS update can break them" },
+        { gain: "On-device AI first, your own key second", cost: "Answer quality varies by model" },
+      ],
+      decisions: [
+        "Notch math and hover logic live in a UI-free, unit-tested package.",
+        "Activate once; a flaky network never locks out a paying user.",
+        "Other apps' alerts show in the notch, unless you're already in that app.",
+        "Signing, notarization, OTA updates and checkout, all shipped with one release command.",
+      ],
+    },
     liveUrl: "https://www.notchfy.com/",
     liveCta: {
       badge: "live · on sale",
@@ -246,6 +266,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "I've used it every day since week one. About 40 voice commands a day, mostly small ones. The next big step is long-term memory — once that lands, it stops being fancy speech-to-text and starts being a real second brain.",
+    brief: {
+      problem: "Voice assistants live in the cloud, forget everything, and rarely do things.",
+      why: "Small desktop chores add up, and nothing good existed for Linux.",
+      architecture: "A background program does the work; the window is just one face on it.",
+      challenge: "Talk over it and the voice, the AI and the mic all have to react instantly.",
+      scale: "One user, one laptop. Cost and storage grow steadily, with no cliffs.",
+      outcome: "Used daily since week one: about 40 voice commands a day.",
+      tradeoffs: [
+        { gain: "Cloud AI is fast and sharp", cost: "It dies without WiFi" },
+        { gain: "Shortcuts and CLI access for free", cost: "The window has to keep syncing state" },
+        { gain: "Long-term memory", cost: "Old facts can leak into new answers" },
+      ],
+      decisions: [
+        "The wake word runs offline so it's instant; the cloud does the thinking.",
+        "Conversations are chunked and stored locally so it can recall them later.",
+        "It runs in the background, so any shortcut or script can talk to it.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh",
     heroVideo: "/reels/jarvis.mp4",
     heroPoster: "/reels/jarvis.jpg",
@@ -338,6 +376,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "About 80% fewer interrupting notifications on my own phone. Group chats basically gone unless someone @s me. Quiet beta with a few friends — they all say the same thing: 'I forgot my phone could be this calm.'",
+    brief: {
+      problem: "Phones treat every ping as urgent, and Do Not Disturb is a sledgehammer.",
+      why: "I missed my landlord's message under 47 notifications of noise.",
+      architecture: "Every notification is scored on-device in about 10ms; hard cases go to the cloud.",
+      challenge: "Android kills slow listeners, so every decision has to fit a tight time budget.",
+      scale: "A ~3 MB model on the phone; the cloud stays under 20¢ per user a month.",
+      outcome: "About 80% fewer interruptions, and beta friends say the same.",
+      tradeoffs: [
+        { gain: "On-device model is instant and free", cost: "Tops out around 87% on tricky cases" },
+        { gain: "Android lets apps read notifications", cost: "No iOS, so half the audience is gone" },
+        { gain: "Noise collapses into a quiet inbox", cost: "Can't un-show what Android already showed" },
+      ],
+      decisions: [
+        "A tiny on-phone model scores each notification before it rings.",
+        "Low-priority pings are grouped into an inbox, never deleted.",
+        "The local model handles 90% for free; the cloud takes the tricky 10%.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh",
     heroVideo: "/reels/nocap.mp4",
     heroPoster: "/reels/nocap.jpg",
@@ -431,6 +487,26 @@ export const projects: Project[] = [
     ],
     outcome:
       "Daily driver. 1,210 songs in, 770 liked tracks fully analyzed, and vibe shuffle is how I actually listen — gym sets hold their energy, focus blocks stay flat, and party mode stops swerving. Lock-screen and notification controls work backgrounded (20/20 verified on-device, against ~3 before the native rewrite), plus offline downloads, real likes that write back to my account, and a separate radio mode for when I do want the endless algorithmic feed. Honest status: alpha, one device, one user — built as a personal and educational project on an unofficial API, not a product.",
+    brief: {
+      problem: "Smart shuffle picks songs by what people click. It has never heard them.",
+      why: "The gym, focus work and parties all need one mood held for an hour.",
+      architecture: "An on-phone model fingerprints how each song sounds; the queue follows the sound.",
+      challenge: "Lock-screen skips died after ~3 tries, until the networking moved to Kotlin.",
+      scale: "Built for one library: 1,210 songs, instant picks, $0 in server cost.",
+      outcome: "Daily driver: 770 tracks analyzed, 20/20 background skips.",
+      tradeoffs: [
+        { gain: "On-device: free, offline, private", cost: "Analysis costs time and battery" },
+        { gain: "React Native UI moved fast", cost: "Every hard bug lived on the native seam" },
+        { gain: "Unofficial API gets my real library", cost: "It can break at any time" },
+        { gain: "Stop on a broken song", cost: "Louder than silently auto-skipping" },
+      ],
+      decisions: [
+        "The model hears the waveform, not tags or play counts.",
+        "Lock ↔ Drift sets how tightly the queue holds the mood.",
+        "A parity test proves the audio input is right before trusting the output.",
+        "Anything that must work while the phone is locked runs natively.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh",
     shots: [
       { src: "/shots/flowstate/library.png", label: "library · playlists pulled from my own account" },
@@ -515,6 +591,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "Core loop works end to end on a live demo: create a property, add flats, invite a tenant who claims in one tap, auto-generate invoices, collect over UPI, and remind by WhatsApp — plus complaints, notices, and document storage. PG-by-the-bed mode shipped. Honest status: pre-revenue, with billing hardening and the auto-send / auto-reconcile upgrades as the road to the first paying landlord.",
+    brief: {
+      problem: "Small landlords track rent in notebooks and chase payers on WhatsApp.",
+      why: "Eight tenants, eight due dates, and a landlord scrolling chats at midnight.",
+      architecture: "One ledger, two faces: a landlord dashboard and a tenant portal.",
+      challenge: "One schema that rents out a whole flat or a single bed, without forking.",
+      scale: "Landlord-sized, not viral: a daily job and near-flat serverless cost.",
+      outcome: "Full loop live: invite, invoice, collect over UPI, remind on WhatsApp.",
+      tradeoffs: [
+        { gain: "UPI QR + mark-paid works on day one", cost: "Reconciling payments is manual" },
+        { gain: "WhatsApp reminder links ship now", cost: "Not automated like the Business API" },
+        { gain: "Tenants join with one tap", cost: "Needed a custom invite-and-claim flow" },
+      ],
+      decisions: [
+        "Landlord and tenant views read the same data.",
+        "A daily job creates invoices and sends reminders on its own.",
+        "A tenancy can point at a whole flat or a single bed.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh",
     liveUrl: "https://rent-manager-weld.vercel.app/",
     shots: [
@@ -605,6 +699,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "The full six-chapter campaign runs end to end — corkboard, duels, consequences, codex — with checkpointed saves and a playable prologue. Honest status: pre-release. The screens below are concept art and UI mockups from the art-direction phase, being locked before the final art pass.",
+    brief: {
+      problem: "Persuasion games reduce it to a dice roll. Nothing trains you to read a person.",
+      why: "Negotiation lessons only stuck when I used them, so I built a trainer.",
+      architecture: "Story as data, rules as pure functions, UI as hand-built panels.",
+      challenge: "Choices that matter, without a combinatorial explosion of branches.",
+      scale: "Offline and single-player. The only thing that grows is content.",
+      outcome: "The six-chapter campaign runs end to end. Pre-release.",
+      tradeoffs: [
+        { gain: "No engine: tiny bundle, full control", cost: "Every UI piece is built by hand" },
+        { gain: "Hand-written branches read better", cost: "Every path costs writing time" },
+        { gain: "AI concept art in hours, not weeks", cost: "Keeping it consistent is the fight" },
+      ],
+      decisions: [
+        "Each mission teaches one real negotiation principle.",
+        "Game logic is pure, tested functions; the UI only renders.",
+        "Pick the angle, then the words: two reads per turn.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh/negotiator-noir",
     shots: [
       { src: "/shots/negotiator-noir/duel-screen.png", label: "duel screen mockup · mood, composure, a live tell + the two-layer move" },
@@ -690,6 +802,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "Daily driver on my own phone — every wake is a fresh wallpaper, and the diagnostics log shows the cycle firing on every screen-off. v1.6 is built as a signed release bundle with the Play listing and privacy policy written; the submission itself is the last step.",
+    brief: {
+      problem: "Android can't rotate the lock screen, and the apps that do are invasive.",
+      why: "I wanted a new wallpaper on every wake, without shady permissions.",
+      architecture: "A live-wallpaper engine stays alive legitimately and rotates on screen-off.",
+      challenge: "Survive in the background with no foreground service or battery exemption.",
+      scale: "All on-device. No backend, no analytics, no data collected.",
+      outcome: "Daily driver; the v1.6 release bundle is ready for the Play Store.",
+      tradeoffs: [
+        { gain: "No zombie background process", cost: "Rotation stops if the live wallpaper is off" },
+        { gain: "Static bitmap: zero battery drama", cost: "No animated home wallpaper" },
+        { gain: "No storage permission needed", cost: "Images take duplicate space" },
+      ],
+      decisions: [
+        "The live wallpaper keeps the process alive, so rotation just works.",
+        "No INTERNET permission: privacy is provable, not promised.",
+        "Images are copied in, so no media permission and nothing breaks.",
+      ],
+    },
     repo: "https://github.com/SamarS1ngh/wallpaper-controller",
     shots: [
       { src: "/shots/wallpaper-controller/home.png", label: "home · pick the home image + span toggle + set as live wallpaper" },
@@ -739,6 +869,24 @@ export const projects: Project[] = [
     ],
     outcome:
       "All four modules in active dev. SSO + Org production-ready and running daily with internal users. PM in beta. Ledger scaffolded. Open-core repos getting traction with early adopters.",
+    brief: {
+      problem: "Small teams pay for five SaaS tools that each reinvent logins and permissions.",
+      why: "I watched a 12-person team spend ~$4k a month on overlapping tools.",
+      architecture: "Four deployable modules sharing one identity and permissions layer.",
+      challenge: "Independent enough to self-host one, shared enough to reuse identity.",
+      scale: "Each module handles ~10k monthly users on a $20 server.",
+      outcome: "SSO and Org in daily use, PM in beta, Ledger scaffolded.",
+      tradeoffs: [
+        { gain: "Multi-repo: deploy only what you need", cost: "CI config duplicated across four repos" },
+        { gain: "End-to-end TypeScript types", cost: "Other languages hand-write request shapes" },
+        { gain: "Open-source users get a real product", cost: "Only a tiny paid surface" },
+      ],
+      decisions: [
+        "SSO and Org sit under everything; the other modules trust them.",
+        "Every module is its own repo and can be self-hosted alone.",
+        "tRPC + Drizzle keep types end to end, from database to UI.",
+      ],
+    },
     architectureMap: `┌──────────┐
 │ browser  │
 │ (client) │
@@ -863,6 +1011,19 @@ export const projects: Project[] = [
     ],
     outcome:
       "Live at drmagnet.in as the landing page for the agency's paid Meta + Google campaigns. Leads land in the sales team's Google Sheet with full qualifying context, and conversions report back to Meta from both browser and server.",
+    brief: {
+      problem: "Paid ad traffic, mostly on mobile: every bounce is wasted money.",
+      architecture: "One server-rendered sales page where every button leads to a booking form.",
+      challenge: "36 elements stayed hidden until JavaScript loaded, which was slow on mid-range phones.",
+      scale: "Scale means ad spend, not servers. Conversion rate is what breaks.",
+      outcome: "Live at drmagnet.in, running the agency's Meta and Google campaigns.",
+      decisions: [
+        "The form qualifies leads before anyone gets on a call.",
+        "Browser and server both report a conversion; Meta counts it once.",
+        "Content ships visible from the server; animation comes after.",
+        "A sticky booking bar follows mobile visitors down the page.",
+      ],
+    },
     client: {
       industry: "Healthcare marketing agency",
       region: "India",
@@ -940,6 +1101,19 @@ export const projects: Project[] = [
     ],
     outcome:
       "Delivered to the client and in production. Handling bookings, live classes, recordings, and payments under real teacher + student load. Calendar-open bursts no longer cost the client lost students.",
+    brief: {
+      problem: "Tutoring ran on Calendly, Zoom, a whiteboard tool and Stripe, glued together.",
+      architecture: "One Next.js app for booking, video, whiteboard, recordings and payments.",
+      challenge: "200+ parents clicking the same slot in the same second, with no double-booking.",
+      scale: "~600 concurrent classes at peak; video seats are the limit, not the backend.",
+      outcome: "In production with real teachers and students.",
+      decisions: [
+        "Each slot is locked so only one booking can win it.",
+        "Recording webhooks can retry safely without creating duplicates.",
+        "Bought video from Daily.co instead of self-hosting, saving weeks.",
+        "Excalidraw is embedded as a shared, synced whiteboard.",
+      ],
+    },
     architectureMap: `┌──────────┐
 │ student  │
 │  / parent│
@@ -1056,6 +1230,18 @@ export const projects: Project[] = [
     ],
     outcome:
       "Delivered and live. Vendors are streaming + running auctions weekly. Bid-to-ack p99 holds under 180ms during peak streams. Auto-settle clears > 96% of winning bids on first charge. The client's CTO walked away with a runbook, a Playwright suite, and a stack he can iterate on without me.",
+    brief: {
+      problem: "Vendors needed live streams with real-time auctions that settle themselves.",
+      architecture: "Expo app, Next.js vendor dashboard, AWS WebSockets for bids and chat.",
+      challenge: "Hundreds of bids per second, in order, with anti-snipe timers.",
+      scale: "~50 live streams at once, each with hundreds of viewers.",
+      outcome: "Live weekly: bid acks under 180ms p99, over 96% auto-settled.",
+      decisions: [
+        "One process owns each auction, so bids are always in order.",
+        "Video and bids use separate channels; a video hiccup doesn't stop bidding.",
+        "The winner is charged at close, then the order is created.",
+      ],
+    },
     architectureMap: `┌──────────────┐               ┌──────────────┐
 │  buyer app   │               │ vendor app   │
 │ (RN · Expo)  │               │ (RN · Expo)  │

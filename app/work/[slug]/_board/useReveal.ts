@@ -26,7 +26,8 @@ export function useReveal<T extends Element>() {
           io.disconnect();
         }
       },
-      { threshold: 0.25 },
+      // any sliver past the bottom 10% counts — a ratio threshold can never fire on a panel taller than the screen
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();

@@ -17,7 +17,7 @@ export function Decrypt({ id, text }: { id: string; text: string }) {
       </button>
       <div
         id={id}
-        className="grid transition-[grid-template-rows] duration-300 ease-out"
+        className="grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none"
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">

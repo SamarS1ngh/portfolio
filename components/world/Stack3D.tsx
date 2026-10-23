@@ -1,7 +1,8 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { SafeCanvas } from "@/components/world/SafeCanvas";
 import { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { projects } from "@/content/projects";
@@ -27,10 +28,10 @@ export function Stack3D({
   idleRef?: React.MutableRefObject<boolean>;
 }) {
   return (
-    <Canvas
+    <SafeCanvas
       camera={{ fov: 55, position: [0, 0, CAM_LEAD], near: 0.1, far: 200 }}
       dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, alpha: true }}
     >
       <FogSetup />
       <ambientLight intensity={0.32} />
@@ -40,7 +41,7 @@ export function Stack3D({
       <EffectComposer>
         <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.7} mipmapBlur />
       </EffectComposer>
-    </Canvas>
+    </SafeCanvas>
   );
 }
 

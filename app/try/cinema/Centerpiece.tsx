@@ -1,6 +1,7 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
+import { SafeCanvas } from "@/components/world/SafeCanvas";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -8,7 +9,7 @@ type Kind = "sphere" | "torus" | "particles" | "ring";
 
 export function Centerpiece({ kind }: { kind: Kind }) {
   return (
-    <Canvas
+    <SafeCanvas
       camera={{ fov: 50, position: [0, 0, 4] }}
       dpr={[1, 1.8]}
       gl={{ antialias: true, alpha: true }}
@@ -20,7 +21,7 @@ export function Centerpiece({ kind }: { kind: Kind }) {
       {kind === "torus" && <TorusStack />}
       {kind === "particles" && <Particles />}
       {kind === "ring" && <Ring />}
-    </Canvas>
+    </SafeCanvas>
   );
 }
 

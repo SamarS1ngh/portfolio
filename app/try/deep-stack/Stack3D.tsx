@@ -1,6 +1,7 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { SafeCanvas } from "@/components/world/SafeCanvas";
 import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { projects } from "@/content/projects";
@@ -21,17 +22,17 @@ export function Stack3D({
   activePin: string | null;
 }) {
   return (
-    <Canvas
+    <SafeCanvas
       camera={{ fov: 45, position: [0, 0, 6] }}
       dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, alpha: true }}
     >
       <ambientLight intensity={0.3} />
       <pointLight position={[5, 4, 5]} intensity={1.6} color="#ffffff" />
       <pointLight position={[-4, -3, 2]} intensity={0.5} color="#7da3ff" />
 
       <Stage progressRef={progressRef} onPinClick={onPinClick} activePin={activePin} />
-    </Canvas>
+    </SafeCanvas>
   );
 }
 

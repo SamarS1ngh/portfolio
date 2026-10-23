@@ -1,6 +1,7 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { SafeCanvas } from "@/components/world/SafeCanvas";
 import { useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { projects } from "@/content/projects";
@@ -17,7 +18,7 @@ const orbits = [
 
 export function Planet({ onPinClick, active }: { onPinClick: (slug: string) => void; active: string | null }) {
   return (
-    <Canvas
+    <SafeCanvas
       camera={{ fov: 38, position: [0, 0, 7] }}
       dpr={[1, 1.8]}
       gl={{ antialias: true, alpha: true }}
@@ -31,7 +32,7 @@ export function Planet({ onPinClick, active }: { onPinClick: (slug: string) => v
       {projects.map((p, i) => (
         <Pin key={p.slug} project={p} orbit={orbits[i % orbits.length]} phase={(i / projects.length) * Math.PI * 2} onClick={() => onPinClick(p.slug)} active={active === p.slug} />
       ))}
-    </Canvas>
+    </SafeCanvas>
   );
 }
 

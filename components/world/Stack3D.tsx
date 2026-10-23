@@ -3,6 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { SafeCanvas } from "@/components/world/SafeCanvas";
+import { WorldFallback2D } from "@/components/world/WorldFallback2D";
 import { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { projects } from "@/content/projects";
@@ -32,6 +33,7 @@ export function Stack3D({
       camera={{ fov: 55, position: [0, 0, CAM_LEAD], near: 0.1, far: 200 }}
       dpr={[1, 1.8]}
       gl={{ antialias: true, alpha: true }}
+      fallback={<WorldFallback2D progressRef={progressRef} />}
     >
       <FogSetup />
       <ambientLight intensity={0.32} />

@@ -85,6 +85,7 @@ export function MobileWorld() {
               onPinClick={() => {}}
               activePin={null}
               idleRef={idleRef}
+              lite
             />
           </div>
         )}

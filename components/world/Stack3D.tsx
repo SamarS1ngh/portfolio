@@ -22,17 +22,23 @@ export function Stack3D({
   onPinClick,
   activePin,
   idleRef,
+  lite = false,
 }: {
   progressRef: React.MutableRefObject<number>;
   onPinClick: (slug: string) => void;
   activePin: string | null;
   idleRef?: React.MutableRefObject<boolean>;
+  // Mobile: skip the Bloom post-processing (extra float render targets + mipmap
+  // chain = the heaviest GPU cost) and cap resolution, so iOS is far less likely
+  // to evict the WebGL context under memory pressure. On phones this is only a
+  // faint 0.18-opacity backdrop, so the glow isn't missed.
+  lite?: boolean;
 }) {
   return (
     <SafeCanvas
       camera={{ fov: 55, position: [0, 0, CAM_LEAD], near: 0.1, far: 200 }}
-      dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true }}
+      dpr={lite ? [1, 1.2] : [1, 1.8]}
+      gl={{ antialias: !lite, alpha: true }}
       fallback={<WorldFallback2D progressRef={progressRef} />}
     >
       <FogSetup />
@@ -40,9 +46,11 @@ export function Stack3D({
       <pointLight position={[5, 4, 5]} intensity={1.5} color="#ffffff" />
       <pointLight position={[-4, -3, 2]} intensity={0.55} color="#7da3ff" />
       <Stage progressRef={progressRef} onPinClick={onPinClick} activePin={activePin} idleRef={idleRef} />
-      <EffectComposer>
-        <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.7} mipmapBlur />
-      </EffectComposer>
+      {!lite && (
+        <EffectComposer>
+          <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.7} mipmapBlur />
+        </EffectComposer>
+      )}
     </SafeCanvas>
   );
 }

@@ -58,12 +58,17 @@ export function SafeCanvas({
   ...rest
 }: CanvasProps & { fallback?: ReactNode }) {
   const [supported, setSupported] = useState<boolean | null>(null);
+  // When iOS/low-memory evicts the GL context mid-session, the render loop would
+  // keep running against dead GPU resources and throw (e.g. reading a freed
+  // geometry attribute). Unmounting the Canvas and showing the 2D fallback stops
+  // that cascade; we remount if the browser restores the context.
+  const [lost, setLost] = useState(false);
 
   // Decide on the client after mount (callers already load this via next/dynamic ssr:false).
   useEffect(() => setSupported(webglAvailable()), []);
 
   if (supported === null) return null;
-  if (!supported) return <>{fallback}</>;
+  if (!supported || lost) return <>{fallback}</>;
 
   return (
     <CanvasErrorBoundary fallback={fallback}>
@@ -77,11 +82,20 @@ export function SafeCanvas({
           ...(gl as object), // caller can still override any of the above
         }}
         onCreated={(state) => {
-          // Prevent a lost context (low-power throttling, backgrounded tab,
-          // memory pressure) from permanently killing the canvas.
-          state.gl.domElement.addEventListener(
+          const canvas = state.gl.domElement;
+          canvas.addEventListener(
             "webglcontextlost",
-            (e) => e.preventDefault(),
+            (e) => {
+              // preventDefault keeps the context restorable; swapping to the
+              // fallback stops the loop from throwing while it's gone.
+              e.preventDefault();
+              setLost(true);
+            },
+            false,
+          );
+          canvas.addEventListener(
+            "webglcontextrestored",
+            () => setLost(false),
             false,
           );
           onCreated?.(state);
